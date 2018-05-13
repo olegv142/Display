@@ -70,3 +70,13 @@ bool SSD1306_Adaptor::write(uint8_t col, uint8_t pg, uint8_t const* data, unsign
 		len = DISP_W - col;
 	return wr_start(col, pg) && wr_data(data, len);
 }
+
+bool SSD1306_Adaptor::clear_region(uint8_t col, uint8_t pg, uint8_t w, uint8_t h)
+{
+	for (uint8_t p = 0; p < h; ++p) {
+		if (!write(col, pg + p, NULL, w))
+			return false;
+	}
+	return true;
+}
+
