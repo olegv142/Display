@@ -19,7 +19,7 @@ static const uint8_t s_init_cmds[] = {
 	0xdb, 0x40, // vcom deselect level
 	0xa8, DISP_H-1, // multiplex ratio
 	0x8d, 0x14, // pump on
-	0x20, 0,    // set scan mode
+	0x20, 2,    // set page addressing mode
 	0x40,       // display start line
 	0xa4,       // display memory
 	0xa6,       // no inverse
