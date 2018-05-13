@@ -1,12 +1,6 @@
 
 #include "SSD1306_Adaptor.h"
 
-/*
- * The SH1106 supports 132x64 resolution while the display has only 128x64 pixels.
- * So the first and last 2 columns are unused.
- */
-#define COL_OFFSET 2
-
 static const uint8_t s_init_cmds[] = {
 	0xae,       // off
 	0xd5, 0x80, // frequency set
@@ -60,7 +54,6 @@ bool SSD1306_Adaptor::set_brightness(uint8_t val)
 
 bool SSD1306_Adaptor::wr_start(uint8_t col, uint8_t pg)
 {
-	col += COL_OFFSET;
 	uint8_t cmds[] = {
 		(uint8_t)(col & 0xf),
 		(uint8_t)(0x10 | ((col >> 4) & 0xf)),
