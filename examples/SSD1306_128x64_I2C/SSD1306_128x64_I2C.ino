@@ -15,8 +15,7 @@ void setup() {
 void loop() {
   ++g_cnt;
   String scnt(g_cnt);
-  g_display.clear();
-  Serial.println(glcd_print_str(&g_display, 0, 0, scnt.c_str(), &g_font_Tahoma44x47D, 1));
+  Serial.println(glcd_print_str_r(&g_display, 0, 0, DISP_W, scnt.c_str(), &g_font_Tahoma44x47D, 1));
   delay(1000);
 }
 
