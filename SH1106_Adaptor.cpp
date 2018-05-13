@@ -25,8 +25,6 @@ static const uint8_t s_init_cmds[] = {
 	0xaf,       // on
 };
 
-static const uint8_t s_zbuff[16] = {0};
-
 bool SH1106_Adaptor::probe()
 {
 	return wr_cmd(0xE3);
@@ -67,20 +65,4 @@ bool SH1106_Adaptor::wr_start(uint8_t col, uint8_t pg)
 		(uint8_t)(0xb0 | (pg & 0xf))
 	};
 	return wr_cmds(cmds, sizeof(cmds));
-}
-
-bool SH1106_Adaptor::clear()
-{
-	for (unsigned p = 0; p < DISP_H/DISP_PG_SZ; ++p)
-	{
-		if (!wr_start(0, p)) {
-			return false;
-		}
-		for (unsigned j = 0; j < DISP_W; j += sizeof(s_zbuff)) {
-			if (!wr_data(s_zbuff, sizeof(s_zbuff))) {
-				return false;
-			}
-		}
-	}
-	return true;
 }

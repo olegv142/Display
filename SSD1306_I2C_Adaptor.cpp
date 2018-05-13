@@ -27,7 +27,7 @@ bool SSD1306_I2C_Adaptor::wr_data(uint8_t const* data, unsigned nbytes)
 		Wire.beginTransmission(m_addr);
 		Wire.write(0x40);
 		for (unsigned j = 0; j < MAX_DATA_CHUNK && i < nbytes; ++i, ++j) {
-			Wire.write(data[i]);
+			Wire.write(data != NULL ? data[i] : 0);
 		}
 		if (Wire.endTransmission() != 0) {
 			return false;
