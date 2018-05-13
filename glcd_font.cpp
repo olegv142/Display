@@ -6,9 +6,9 @@
 #include "glcd_fonts.h"
 #include "DisplayAdaptor.h"
 
-#define MAX_CHAR_W 64
+#define MAX_DATA_CHUNK 16
 
-static uint8_t s_char_buff[MAX_CHAR_W];
+static uint8_t s_char_buff[MAX_DATA_CHUNK];
 
 static inline unsigned glcd_font_sym_valid(struct glcd_font const* font, uint8_t c)
 {
@@ -34,16 +34,21 @@ static inline uint8_t const* glcd_font_sym_data(struct glcd_font const* font, ch
 static bool glcd_draw_char(DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, unsigned h, uint8_t const* data)
 {
 	unsigned r, c;
-	if (w > MAX_CHAR_W) {
-		return false;
-	}
 	for (r = 0; r < h; ++r, ++data)
 	{
 		uint8_t const* ptr = data;
-		for (c = 0; c < w; ++c, ptr += h) {
-			s_char_buff[c] = pgm_read_byte(ptr);
+		uint8_t off = 0, i = 0;
+		for (c = 0; c < w; ++c, ++i, ptr += h) {
+			if (i >= MAX_DATA_CHUNK) {
+				if (!d->write(x + off, y + r, s_char_buff, i)) {
+					return false;
+				}
+				off += i;
+				i = 0;
+			}
+			s_char_buff[i] = pgm_read_byte(ptr);
 		}
-		if (!d->write(x, y + r, s_char_buff, w)) {
+		if (!d->write(x + off, y + r, s_char_buff, i)) {
 			return false;
 		}
 	}
