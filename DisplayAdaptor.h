@@ -38,7 +38,7 @@ public:
 	virtual bool clear() = 0;
 
 	/* Clear certain region (note that the row coordinate is in page units) */
-	virtual bool clear_region(uint8_t col, uint8_t pg, uint8_t w) = 0;
+	virtual bool clear_region(uint8_t col, uint8_t pg, uint8_t w, uint8_t h) = 0;
 
 	/* Write data to display memory (note that the row coordinate is in page units) */
 	virtual bool write(uint8_t col, uint8_t pg, uint8_t const* data, unsigned len) = 0;
