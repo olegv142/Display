@@ -66,3 +66,12 @@ bool SH1106_Adaptor::wr_start(uint8_t col, uint8_t pg)
 	};
 	return wr_cmds(cmds, sizeof(cmds));
 }
+
+bool SH1106_Adaptor::write(uint8_t col, uint8_t pg, uint8_t const* data, unsigned len)
+{
+	if (col >= DISP_W)
+		return false;
+	if (col + len > DISP_W)
+		len = DISP_W - col;
+	return wr_start(col, pg) && wr_data(data, len);
+}

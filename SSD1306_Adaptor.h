@@ -19,15 +19,15 @@ public:
 	virtual bool light_all(bool active);
 	virtual bool set_inverse(bool active);
 	virtual bool set_brightness(uint8_t val);
+	virtual bool write(uint8_t col, uint8_t pg, uint8_t const* data, unsigned len);
+	virtual bool clear_region(uint8_t col, uint8_t pg, uint8_t w) {
+		return write(col, pg, NULL, w);
+	}
 	virtual bool clear() {
 		for (uint8_t pg = 0; pg < DISP_H/DISP_PG_SZ; ++pg)
-			clear_region(0, pg, DISP_W);
-	}
-	virtual bool clear_region(uint8_t col, uint8_t pg, uint8_t w) {
-		return wr_start(col, pg) && wr_data(NULL, w);
-	}
-	virtual bool write(uint8_t col, uint8_t pg, uint8_t const* data, unsigned len) {
-		return wr_start(col, pg) && wr_data(data, len);
+			if (!clear_region(0, pg, DISP_W))
+				return false;
+		return true;
 	}
 
 protected:
