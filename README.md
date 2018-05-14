@@ -7,7 +7,7 @@ The library has the following distinctive features:
 - Extensible class hierarchy
 - Small memory footprint (no screen buffer)
 - Fast data transfer due to batching
-- Wide selection of fonts
+- Wide selection of fonts, some supporting Cyrillic symbols
 - New fonts can be easily created by freely available tools like MicoElectronica GLCD fonts creator
 - Printing routines can be used without first cleaning the entire screen area
 
