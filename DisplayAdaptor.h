@@ -19,6 +19,12 @@ public:
 	/* Check display is present */
 	virtual bool probe() = 0;
 
+	/* Returns display width */
+	virtual uint8_t width() const = 0;
+
+	/* Returns display height */
+	virtual uint8_t height() const = 0;
+
 	/* Initialize display */
 	virtual bool init() = 0;
 

@@ -9,13 +9,14 @@ void setup() {
   Serial.begin(9600);
   Serial.print("probe ");
   Serial.println(g_display.probe());
+  Serial.println(g_display.set_model(SSD1306_128x32));
   Serial.println(g_display.init());
 }
 
 void loop() {
   ++g_cnt;
   String scnt(g_cnt);
-  Serial.println(glcd_print_str_r(&g_display, 0, 0, g_display.width(), scnt.c_str(), &g_font_Tahoma44x47D, 1));
+  Serial.println(glcd_print_str_r(&g_display, 0, 0, g_display.width(), scnt.c_str(), &g_font_Tahoma19x20, 1));
   delay(1000);
 }
 

@@ -8,10 +8,8 @@ static const uint8_t s_init_cmds[] = {
 	0xc8,       // reversed scan
 	0xd3, 0,    // no offset
 	0x40,       // start line 0
-	0xda, 0x12, // common pads alternative mode
 	0x81, 0xcf, // contrast
 	0xdb, 0x40, // vcom deselect level
-	0xa8, DISP_H-1, // multiplex ratio
 	0x8d, 0x14, // pump on
 	0x20, 2,    // set page addressing mode
 	0x40,       // display start line
@@ -20,6 +18,23 @@ static const uint8_t s_init_cmds[] = {
 	0x2e,       // no scroll
 	0xaf,       // on
 };
+
+/* Set display model. Must be called before init() */
+bool SSD1306_Adaptor::set_model(SSD1306_Model_t m)
+{
+	switch (m) {
+	case SSD1306_128x64:
+		m_height = 64;
+		m_mode = 0x12;
+		return true;
+	case SSD1306_128x32:
+		m_height = 32;
+		m_mode = 0x2;
+		return true;
+	default:
+		return false;
+	}
+}
 
 bool SSD1306_Adaptor::probe()
 {
@@ -33,7 +48,10 @@ bool SSD1306_Adaptor::enable(bool on)
 
 bool SSD1306_Adaptor::init()
 {
-	return wr_cmds(s_init_cmds, sizeof(s_init_cmds)) && clear();
+	uint8_t hmode_cmds[] = {0xa8, (uint8_t)(m_height-1), 0xda, m_mode};
+	return	wr_cmds(s_init_cmds, sizeof(s_init_cmds)) &&
+		wr_cmds(hmode_cmds, sizeof(hmode_cmds)) &&
+		clear();
 }
 
 bool SSD1306_Adaptor::light_all(bool active)

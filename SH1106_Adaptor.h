@@ -20,8 +20,12 @@ public:
 	virtual bool set_inverse(bool active);
 	virtual bool set_brightness(uint8_t val);
 	virtual bool write(uint8_t col, uint8_t pg, uint8_t const* data, unsigned len);
+
 	virtual bool clear_region(uint8_t col, uint8_t pg, uint8_t w, uint8_t h);
 	virtual bool clear() { return clear_region(0, 0, DISP_W, DISP_H/DISP_PG_SZ); }
+
+	virtual uint8_t width() const { return DISP_W; }
+	virtual uint8_t height() const { return DISP_H; }
 
 protected:
 	bool wr_start(uint8_t col, uint8_t pg);
