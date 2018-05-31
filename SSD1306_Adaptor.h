@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-#include "DisplayAdaptor.h"
+#include "BW8DisplayAdaptor.h"
 
 /*
  * SH1106 based display adaptor
@@ -15,7 +15,7 @@ typedef enum {
 	SSD1306_128x32
 } SSD1306_Model_t;
 
-class SSD1306_Adaptor : public DisplayAdaptor {
+class SSD1306_Adaptor : public BW8DisplayAdaptor {
 public:
 	SSD1306_Adaptor() : m_height(64), m_mode(0x12) {}
 

@@ -17,7 +17,7 @@ struct glcd_font {
 	uint8_t const* PROGMEM data;
 };
 
-class DisplayAdaptor;
+class BW8DisplayAdaptor;
 
 /* Calculate printed text length */
 unsigned glcd_printed_len(const char* str, struct glcd_font const* font, int spacing);
@@ -26,13 +26,13 @@ unsigned glcd_printed_len(const char* str, struct glcd_font const* font, int spa
  * will be treated as mono spacing, otherwise the specified spacing will be used for variable spacing print.
  * Returns the width of the text printed or -1 in case of error.
  */
-int glcd_print_str(DisplayAdaptor* d, unsigned x, unsigned y, const char* str, struct glcd_font const* font, int spacing);
+int glcd_print_str(BW8DisplayAdaptor* d, unsigned x, unsigned y, const char* str, struct glcd_font const* font, int spacing);
 
 /* Print string in given display area. If spacing < 0 the font will be treated as mono spacing, otherwise the specified
  * spacing will be used for variable spacing print. In case the text with is less than print area width w the remaining
  * display area will be erased. Returns the width of the text printed or -1 in case of error.
  */
-int glcd_print_str_w(DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing);
+int glcd_print_str_w(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing);
 
 /* Print string right aligned. Returns the offset of the printed text end or -1 in case of error. */
-int glcd_print_str_r(DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing);
+int glcd_print_str_r(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing);

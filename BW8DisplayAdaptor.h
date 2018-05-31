@@ -5,13 +5,13 @@
 /* The page is the group of 8 consecutive rows */
 #define DISP_PG_SZ 8
 
-/* 
- * Generic low level display API
+/*
+ * B/W display with 8-pixel height 'pages'
  */
-class DisplayAdaptor {
+class BW8DisplayAdaptor {
 public:
-	DisplayAdaptor() {}
-	virtual ~DisplayAdaptor() {}
+	BW8DisplayAdaptor() {}
+	virtual ~BW8DisplayAdaptor() {}
 
 	/* Initialize interface port */
 	virtual void begin() {}

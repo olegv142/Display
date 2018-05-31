@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-#include "DisplayAdaptor.h"
+#include "BW8DisplayAdaptor.h"
 
 /*
  * SH1106 based display adaptor
@@ -11,7 +11,7 @@
 #define DISP_W 128
 #define DISP_H 64
 
-class SH1106_Adaptor : public DisplayAdaptor {
+class SH1106_Adaptor : public BW8DisplayAdaptor {
 public:
 	virtual bool probe();
 	virtual bool init();

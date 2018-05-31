@@ -4,7 +4,7 @@
  */
 
 #include "glcd_fonts.h"
-#include "DisplayAdaptor.h"
+#include "BW8DisplayAdaptor.h"
 
 #define MAX_DATA_CHUNK 16
 
@@ -31,7 +31,7 @@ static inline uint8_t const* glcd_font_sym_data(struct glcd_font const* font, ch
 }
 
 /* Put char in the specified position. Note that y is in 8 pixel groups */
-static bool glcd_draw_char(DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, unsigned h, uint8_t const* data)
+static bool glcd_draw_char(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, unsigned h, uint8_t const* data)
 {
 	unsigned r, c;
 	for (r = 0; r < h; ++r, ++data)
@@ -59,7 +59,7 @@ static bool glcd_draw_char(DisplayAdaptor* d, unsigned x, unsigned y, unsigned w
  * will be treated as mono spacing, otherwise the specified spacing will be used for variable spacing print.
  * Returns the width of the text printed or -1 in case of error.
  */
-int glcd_print_str(DisplayAdaptor* d, unsigned x, unsigned y, const char* str, struct glcd_font const* font, int spacing)
+int glcd_print_str(BW8DisplayAdaptor* d, unsigned x, unsigned y, const char* str, struct glcd_font const* font, int spacing)
 {
 	unsigned h = glcd_font_col_bytes(font);
 	unsigned empty_space = spacing > 0 ? spacing : 0;
@@ -104,7 +104,7 @@ unsigned glcd_printed_len(const char* str, struct glcd_font const* font, int spa
  * spacing will be used for variable spacing print. In case the text with is less than print area width w the remaining
  * display area will be erased. Returns the width of the text printed or -1 in case of error.
  */
-int glcd_print_str_w(DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing)
+int glcd_print_str_w(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing)
 {
 	int printed_w = glcd_print_str(d, x, y, str, font, spacing);
 	if (printed_w < 0)
@@ -117,7 +117,7 @@ int glcd_print_str_w(DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, cons
 }
 
 /* Print string right aligned. Returns the offset of the printed text end or -1 in case of error. */
-int glcd_print_str_r(DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing)
+int glcd_print_str_r(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing)
 {
 	unsigned text_w = glcd_printed_len(str, font, spacing);
 	if (text_w > w) {
