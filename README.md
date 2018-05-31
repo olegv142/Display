@@ -1,5 +1,5 @@
-# OLEDDisplay
-OLED drivers for Arduino
+# Display
+Display drivers for Arduino
 
 Supported chips: SSD1306, SH1106, currently only in I2C mode with 128x64 and 128x32 resolutions.
 
