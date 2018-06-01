@@ -13,16 +13,17 @@
 
 class SH1106_Adaptor : public BW8DisplayAdaptor {
 public:
-	virtual bool probe();
-	virtual bool init();
-	virtual bool enable(bool on);
-	virtual bool light_all(bool active);
-	virtual bool set_inverse(bool active);
-	virtual bool set_brightness(uint8_t val);
-	virtual bool write(uint8_t col, uint8_t pg, uint8_t const* data, unsigned len);
+	bool probe();
 
-	virtual bool clear_region(uint8_t col, uint8_t pg, uint8_t w, uint8_t h);
-	virtual bool clear() { return clear_region(0, 0, DISP_W, DISP_H/DISP_PG_SZ); }
+	virtual void init();
+	virtual void enable(bool on);
+	virtual void light_all(bool active);
+	virtual void set_inverse(bool active);
+	virtual void set_brightness(uint8_t val);
+	virtual void write(uint8_t col, uint8_t pg, uint8_t const* data, unsigned len);
+
+	virtual void clear_region(uint8_t col, uint8_t pg, uint8_t w, uint8_t h);
+	virtual void clear() { clear_region(0, 0, DISP_W, DISP_H/DISP_PG_SZ); }
 
 	virtual uint8_t width() const { return DISP_W; }
 	virtual uint8_t height() const { return DISP_H; }

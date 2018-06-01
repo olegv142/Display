@@ -9,7 +9,7 @@ void setup() {
   Serial.begin(9600);
   Serial.print("probe ");
   Serial.println(g_display.probe());
-  Serial.println(g_display.init());
+  g_display.init();
 }
 
 void loop() {

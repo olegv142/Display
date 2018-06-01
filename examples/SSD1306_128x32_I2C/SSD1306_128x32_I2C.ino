@@ -9,8 +9,8 @@ void setup() {
   Serial.begin(9600);
   Serial.print("probe ");
   Serial.println(g_display.probe());
-  Serial.println(g_display.set_model(SSD1306_128x32));
-  Serial.println(g_display.init());
+  g_display.set_model(SSD1306_128x32);
+  g_display.init();
 }
 
 void loop() {

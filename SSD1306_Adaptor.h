@@ -20,18 +20,19 @@ public:
 	SSD1306_Adaptor() : m_height(64), m_mode(0x12) {}
 
 	/* Set display model. Must be called before init() */
-	bool set_model(SSD1306_Model_t m);
+	void set_model(SSD1306_Model_t m);
 
-	virtual bool probe();
-	virtual bool init();
-	virtual bool enable(bool on);
-	virtual bool light_all(bool active);
-	virtual bool set_inverse(bool active);
-	virtual bool set_brightness(uint8_t val);
-	virtual bool write(uint8_t col, uint8_t pg, uint8_t const* data, unsigned len);
+	bool probe();
 
-	virtual bool clear_region(uint8_t col, uint8_t pg, uint8_t w, uint8_t h);
-	virtual bool clear() { return clear_region(0, 0, DISP_W, m_height/DISP_PG_SZ); }
+	virtual void init();
+	virtual void enable(bool on);
+	virtual void light_all(bool active);
+	virtual void set_inverse(bool active);
+	virtual void set_brightness(uint8_t val);
+	virtual void write(uint8_t col, uint8_t pg, uint8_t const* data, unsigned len);
+
+	virtual void clear_region(uint8_t col, uint8_t pg, uint8_t w, uint8_t h);
+	virtual void clear() { return clear_region(0, 0, DISP_W, m_height/DISP_PG_SZ); }
 
 	virtual uint8_t width() const { return DISP_W; }
 	virtual uint8_t height() const { return m_height; }

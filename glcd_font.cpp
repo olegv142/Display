@@ -31,7 +31,7 @@ static inline uint8_t const* glcd_font_sym_data(struct glcd_font const* font, ch
 }
 
 /* Put char in the specified position. Note that y is in 8 pixel groups */
-static bool glcd_draw_char(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, unsigned h, uint8_t const* data)
+static void glcd_draw_char(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, unsigned h, uint8_t const* data)
 {
 	unsigned r, c;
 	for (r = 0; r < h; ++r, ++data)
@@ -40,24 +40,19 @@ static bool glcd_draw_char(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigne
 		uint8_t off = 0, i = 0;
 		for (c = 0; c < w; ++c, ++i, ptr += h) {
 			if (i >= MAX_DATA_CHUNK) {
-				if (!d->write(x + off, y + r, s_char_buff, i)) {
-					return false;
-				}
+				d->write(x + off, y + r, s_char_buff, i);
 				off += i;
 				i = 0;
 			}
 			s_char_buff[i] = pgm_read_byte(ptr);
 		}
-		if (!d->write(x + off, y + r, s_char_buff, i)) {
-			return false;
-		}
+		d->write(x + off, y + r, s_char_buff, i);
 	}
-	return true;
 }
 
 /* Print string starting from the specified position where y is in 8 pixel groups (pages). If spacing < 0 the font
  * will be treated as mono spacing, otherwise the specified spacing will be used for variable spacing print.
- * Returns the width of the text printed or -1 in case of error.
+ * Returns the width of the text printed.
  */
 int glcd_print_str(BW8DisplayAdaptor* d, unsigned x, unsigned y, const char* str, struct glcd_font const* font, int spacing)
 {
@@ -69,13 +64,10 @@ int glcd_print_str(BW8DisplayAdaptor* d, unsigned x, unsigned y, const char* str
 		if (glcd_font_sym_valid(font, c)) {
 			uint8_t const* data = glcd_font_sym_data(font, c);
 			uint8_t w = spacing < 0 ? font->w : pgm_read_byte(data);
-			if (!glcd_draw_char(d, col, y, w, h, data + 1)) {
-				return -1;
-			}			
+			glcd_draw_char(d, col, y, w, h, data + 1);
 			col += w;
 			if (empty_space) {
-				if (!d->clear_region(col, y, empty_space, h))
-					return -1;
+				d->clear_region(col, y, empty_space, h);
 				col += empty_space;
 			}
 		} else
@@ -102,21 +94,18 @@ unsigned glcd_printed_len(const char* str, struct glcd_font const* font, int spa
 
 /* Print string in given display area. If spacing < 0 the font will be treated as mono spacing, otherwise the specified
  * spacing will be used for variable spacing print. In case the text with is less than print area width w the remaining
- * display area will be erased. Returns the width of the text printed or -1 in case of error.
+ * display area will be erased. Returns the width of the text printed.
  */
 int glcd_print_str_w(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing)
 {
 	int printed_w = glcd_print_str(d, x, y, str, font, spacing);
-	if (printed_w < 0)
-		return -1;
 	if (printed_w < w) {
-		if (!d->clear_region(x + printed_w, y, w - printed_w, glcd_font_col_bytes(font)))
-			return -1;
+		d->clear_region(x + printed_w, y, w - printed_w, glcd_font_col_bytes(font));
 	}
 	return printed_w;
 }
 
-/* Print string right aligned. Returns the offset of the printed text end or -1 in case of error. */
+/* Print string right aligned. Returns the offset of the printed text end. */
 int glcd_print_str_r(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing)
 {
 	unsigned text_w = glcd_printed_len(str, font, spacing);
@@ -124,11 +113,7 @@ int glcd_print_str_r(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, c
 		return glcd_print_str(d, x, y, str, font, spacing);
 	} else {
 		unsigned off = w - text_w;
-		if (!d->clear_region(x, y, off, glcd_font_col_bytes(font)))
-			return -1;
-		int printed_w = glcd_print_str(d, x + off, y, str, font, spacing);
-		if (printed_w < 0)
-			return -1;
-		return off + printed_w;
+		d->clear_region(x, y, off, glcd_font_col_bytes(font));
+		return off + glcd_print_str(d, x + off, y, str, font, spacing);
 	}
 }

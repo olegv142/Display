@@ -30,30 +30,31 @@ bool SH1106_Adaptor::probe()
 	return wr_cmd(0xE3);
 }
 
-bool SH1106_Adaptor::enable(bool on)
+void SH1106_Adaptor::enable(bool on)
 {
-	return wr_cmd(0xAE + uint8_t(on));
+	wr_cmd(0xAE + uint8_t(on));
 }
 
-bool SH1106_Adaptor::init()
+void SH1106_Adaptor::init()
 {
-	return wr_cmds(s_init_cmds, sizeof(s_init_cmds)) && clear();
+	wr_cmds(s_init_cmds, sizeof(s_init_cmds));
+	clear();
 }
 
-bool SH1106_Adaptor::light_all(bool active)
+void SH1106_Adaptor::light_all(bool active)
 {
-	return wr_cmd(0xA4 + uint8_t(active));
+	wr_cmd(0xA4 + uint8_t(active));
 }
 
-bool SH1106_Adaptor::set_inverse(bool active)
+void SH1106_Adaptor::set_inverse(bool active)
 {
-	return wr_cmd(0xA6 + uint8_t(active));
+	wr_cmd(0xA6 + uint8_t(active));
 }
 
-bool SH1106_Adaptor::set_brightness(uint8_t val)
+void SH1106_Adaptor::set_brightness(uint8_t val)
 {
 	uint8_t cmds[] = {0x81, val};
-	return wr_cmds(cmds, sizeof(cmds));
+	wr_cmds(cmds, sizeof(cmds));
 }
 
 bool SH1106_Adaptor::wr_start(uint8_t col, uint8_t pg)
@@ -67,20 +68,19 @@ bool SH1106_Adaptor::wr_start(uint8_t col, uint8_t pg)
 	return wr_cmds(cmds, sizeof(cmds));
 }
 
-bool SH1106_Adaptor::write(uint8_t col, uint8_t pg, uint8_t const* data, unsigned len)
+void SH1106_Adaptor::write(uint8_t col, uint8_t pg, uint8_t const* data, unsigned len)
 {
-	if (col >= DISP_W)
-		return false;
+	if (col > DISP_W)
+		col = DISP_W;
 	if (col + len > DISP_W)
 		len = DISP_W - col;
-	return wr_start(col, pg) && wr_data(data, len);
+	wr_start(col, pg);
+	wr_data(data, len);
 }
 
-bool SH1106_Adaptor::clear_region(uint8_t col, uint8_t pg, uint8_t w, uint8_t h)
+void SH1106_Adaptor::clear_region(uint8_t col, uint8_t pg, uint8_t w, uint8_t h)
 {
 	for (uint8_t p = 0; p < h; ++p) {
-		if (!write(col, pg + p, NULL, w))
-			return false;
+		write(col, pg + p, NULL, w);
 	}
-	return true;
 }
