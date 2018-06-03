@@ -1,5 +1,9 @@
 #pragma once
 
+/*
+ * 16 bit packed RGB codes
+ */
+
 /* 16 bit colour value: 5 red | 6 green | 5 blue */
 #define RGB16(r, g, b) (((uint16_t)((r) & 0xF8)<<8) | ((uint16_t)((g) & 0xFC)<<3) | ((uint16_t)((b) & 0xF8)>>3))
 

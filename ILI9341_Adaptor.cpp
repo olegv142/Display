@@ -1,5 +1,6 @@
 #include "ILI9341_Adaptor.h"
 
+/* The power-up initialization configuration. Taken from MI0283QT-9A screen datasheet. */
 static const uint8_t s_ILI9341_init_cmds[] PROGMEM = {
 	4, 0xCF, 0x00, 0x83, 0x30,
 	5, 0xED, 0x64, 0x03, 0x12, 0x81,     
@@ -56,6 +57,7 @@ void ILI9341_Adaptor::init()
 	write_cmd(0x29);
 }
 
+/* Perform hard / soft reset and wake up screen from the sleep */
 void ILI9341_Adaptor::reset()
 {
 	// hard reset
@@ -70,6 +72,7 @@ void ILI9341_Adaptor::reset()
 	enable(true);
 }
 
+/* Push power-up configuration */
 void ILI9341_Adaptor::configure()
 {
 	select();
@@ -85,6 +88,7 @@ void ILI9341_Adaptor::enable(bool on)
 	if (on) delay(20);
 }
 
+/* Write bytes to the device. If cmd is true the first byte is the command */
 void ILI9341_Adaptor::write_bytes_(bool cmd, uint8_t const* bytes, uint8_t len, bool pgmem)
 {
 	digitalWrite(m_dc, cmd ? LOW : HIGH);
@@ -98,6 +102,7 @@ void ILI9341_Adaptor::write_bytes_(bool cmd, uint8_t const* bytes, uint8_t len, 
 	}
 }
 
+/* Write sequence of commands. Each command bytes should be prefixed by the length byte. The whole sequence should be terminated by 0 byte. */
 void ILI9341_Adaptor::write_cmds_(uint8_t const* buff, bool pgmem)
 {
 	for (;;) {
@@ -110,6 +115,7 @@ void ILI9341_Adaptor::write_cmds_(uint8_t const* buff, bool pgmem)
 	}
 }
 
+/* Setup memory write window */
 void ILI9341_Adaptor::set_write_window_(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
 {
 	x1 -= 1;
@@ -123,6 +129,7 @@ void ILI9341_Adaptor::set_write_window_(uint16_t x0, uint16_t y0, uint16_t x1, u
 	write_cmds_(bytes);
 }
 
+/* Setup memory write position */
 void ILI9341_Adaptor::set_write_pos_(uint16_t x, uint16_t y)
 {
 	uint8_t bytes[] = {
@@ -134,6 +141,9 @@ void ILI9341_Adaptor::set_write_pos_(uint16_t x, uint16_t y)
 	write_cmds_(bytes);
 }
 
+/* Setup memory write order according to the screen orientation and optionally flip axis
+ * so writing will proceed in the column order.
+ */
 void ILI9341_Adaptor::set_write_order_(bool flip_axis)
 {
 	uint8_t o = m_o;
@@ -240,4 +250,27 @@ void ILI9341_Adaptor::write_end()
 {
 	set_write_order_();
 	unselect();
+}
+
+/* Set scrolling region */
+void ILI9341_Adaptor::set_scroll_range(uint16_t fr, uint16_t to)
+{
+	uint16_t sa = to - fr, ba = 320 - to;
+	uint8_t bytes[] = {
+		0x33,
+		(uint8_t)(fr >> 8), (uint8_t)(fr),
+		(uint8_t)(sa >> 8), (uint8_t)(sa),
+		(uint8_t)(ba >> 8), (uint8_t)(ba)
+	};
+	write_bytes(true, bytes, sizeof(bytes));
+}
+
+/* Set scrolling position */
+void ILI9341_Adaptor::set_scroll_pos(uint16_t pos)
+{
+	uint8_t bytes[] = {
+		0x37,
+		(uint8_t)(pos >> 8), (uint8_t)(pos)
+	};
+	write_bytes(true, bytes, sizeof(bytes));
 }
