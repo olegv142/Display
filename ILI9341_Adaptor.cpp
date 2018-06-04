@@ -170,44 +170,51 @@ void ILI9341_Adaptor::set_write_order_(bool flip_axis)
 }
 
 /* Put pixel */
-void ILI9341_Adaptor::put_pixel_(uint16_t x, uint16_t y, uint16_t colour)
+void ILI9341_Adaptor::put_pixel(uint16_t x, uint16_t y, uint16_t colour)
 {
+	select();
 	set_write_pos_(x, y);
 	write_pixel_(colour);
+	unselect();
 }
 
 /* Fill certain region */
-void ILI9341_Adaptor::fill_rect_(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t colour)
+void ILI9341_Adaptor::fill_rect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t colour)
 {
+	select();
 	set_write_window_(x, y, x + w, y + h);
 	for (uint16_t j = 0; j < h; ++j) {
 		for (uint16_t i = 0; i < w; ++i) {
 			write_pixel_(colour);
 		}
 	}
+	unselect();
 }
 
 /* Draw horizontal line */
-void ILI9341_Adaptor::hline_(uint16_t x, uint16_t y, uint16_t len, uint16_t colour)
+void ILI9341_Adaptor::hline(uint16_t x, uint16_t y, uint16_t len, uint16_t colour)
 {
+	select();
 	set_write_pos_(x, y);
-	for (; len; --len)
-		write_pixel_(colour);
+	for (; len; --len) write_pixel_(colour);
+	unselect();
 }
 
 /* Draw vertical line */
-void ILI9341_Adaptor::vline_(uint16_t x, uint16_t y, uint16_t len, uint16_t colour)
+void ILI9341_Adaptor::vline(uint16_t x, uint16_t y, uint16_t len, uint16_t colour)
 {
+	select();
 	set_write_order_(true);
 	set_write_pos_(y, x);
-	for (; len; --len)
-		write_pixel_(colour);
+	for (; len; --len) write_pixel_(colour);
 	set_write_order_();
+	unselect();
 }
 
 /* Setup rectangular writing area */
-void ILI9341_Adaptor::write_begin_(uint16_t x, uint16_t y, uint16_t w, uint16_t h, bool col_order)
+void ILI9341_Adaptor::write_begin(uint16_t x, uint16_t y, uint16_t w, uint16_t h, bool col_order)
 {
+	select();
 	if (col_order) {
 		set_write_order_(true);
 		set_write_window_(y, x, y + h, x + w);
@@ -239,9 +246,10 @@ void ILI9341_Adaptor::write_pixels_bm(uint8_t const* pix_bm, int len, uint16_t c
 }
 
 /* End writing */
-void ILI9341_Adaptor::write_end_()
+void ILI9341_Adaptor::write_end()
 {
 	set_write_order_();
+	unselect();
 }
 
 /* Set scrolling region */

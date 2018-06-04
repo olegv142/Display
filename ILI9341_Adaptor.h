@@ -28,28 +28,17 @@ public:
 	/* Enable / disable display */
 	virtual void enable(bool on);
 
-	/*
-	 * Core drawing API
-	 */
-
-	/* Begin / end drawing operations */
-	virtual void draw_begin() { select(); }
-	virtual void draw_end() { unselect(); }
-
 	/* Put pixel */
-	virtual void put_pixel_(uint16_t x, uint16_t y, uint16_t colour);
+	virtual void put_pixel(uint16_t x, uint16_t y, uint16_t colour);
 
 	/* Draw horizontal line */
-	virtual void hline_(uint16_t x, uint16_t y, uint16_t len, uint16_t colour);
+	virtual void hline(uint16_t x, uint16_t y, uint16_t len, uint16_t colour);
 
 	/* Draw vertical line */
-	virtual void vline_(uint16_t x, uint16_t y, uint16_t len, uint16_t colour);
-
-	/* Fill certain region */
-	virtual void fill_rect_(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t colour);
+	virtual void vline(uint16_t x, uint16_t y, uint16_t len, uint16_t colour);
 
 	/* Setup rectangular writing area */
-	virtual void write_begin_(uint16_t x, uint16_t y, uint16_t w, uint16_t h, bool col_order);
+	virtual void write_begin(uint16_t x, uint16_t y, uint16_t w, uint16_t h, bool col_order);
 
 	/* Write pixels */
 	virtual void write_pixels(uint16_t const* pix_buff, int len);
@@ -58,7 +47,10 @@ public:
 	virtual void write_pixels_bm(uint8_t const* pix_bm, int len, uint16_t colours[2]);
 
 	/* End writing */
-	virtual void write_end_();
+	virtual void write_end();
+
+	/* Fill certain region */
+	virtual void fill_rect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t colour);
 
 	/*
 	 * Scrolling API
