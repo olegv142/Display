@@ -1,20 +1,25 @@
 #pragma once
 
 #include "RGB16DisplayAdaptor.h"
-#include <SPI.h>
+#include "SPIDisplay.h"
 
 /*
  * ILI9341 display low level interface
  */
-class ILI9341_Adaptor : public RGB16DisplayAdaptor {
+class ILI9341_Adaptor : public RGB16DisplayAdaptor, protected SPIDisplay {
 public:
 	/*
 	 * Create display adaptor instance given the screen orientation and control lines pin numbers.
 	 */
-	ILI9341_Adaptor(uint8_t orientation, uint8_t cs, uint8_t rst, uint8_t dc);
+	ILI9341_Adaptor(uint8_t orientation, uint8_t cs, uint8_t rst, uint8_t dc)
+		: SPIDisplay(cs, rst, dc)
+		, m_o(orientation)
+		, m_w(orientation & 1 ? 320 : 240)
+		, m_h(orientation & 1 ? 240 : 320)
+			{}
 
 	/* Initialize interface port */
-	virtual void begin();
+	virtual void begin() { SPIDisplay::begin(); }
 
 	/* Returns display width */
 	virtual uint16_t width() const { return m_w; }
@@ -77,32 +82,10 @@ private:
 	void reset();
 	/* Push power-up configuration */
 	void configure();
-	/* Chip select control helpers */
-	void select()   { digitalWrite(m_cs, LOW); }
-	void unselect() { digitalWrite(m_cs, HIGH); }
 
 	/*
 	 * Helper routines. The ones with name ending by _ should be enclosed between select and unselect calls.
 	 */
-
-	/* Write bytes to the device. If cmd is true the first byte is the command */
-	void write_bytes_(bool cmd, uint8_t const* bytes, uint8_t len, bool pgmem = false);
-	void write_bytes(bool cmd, uint8_t const* bytes, uint8_t len, bool pgmem = false) {
-		select();
-		write_bytes_(cmd, bytes, len, pgmem);
-		unselect();
-	}
-	/* Write sequence of commands. Each command bytes should be prefixed by the length byte. The whole sequence should be terminated by 0 byte. */
-	void write_cmds_(uint8_t const* buff, bool pgmem = false);
-	void write_cmds(uint8_t const* buff, bool pgmem = false) {
-		select();
-		write_cmds_(buff, pgmem);
-		unselect();
-	}
-	/* Write single command without parameters */
-	void write_cmd(uint8_t cmd) {
-		write_bytes(true, &cmd, 1, false);
-	}
 
 	/* Setup memory write window */
 	void set_write_window_(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1);
@@ -114,15 +97,12 @@ private:
 	void set_write_order_(bool flip_axis = false);
 	/* Write pixel RGB data */
 	void write_pixel_(uint16_t colour) {
-		SPI.transfer((uint8_t)(colour >> 8));
-		SPI.transfer((uint8_t)(colour));
+		transfer((uint8_t)(colour >> 8));
+		transfer((uint8_t)(colour));
 	}
 
 	uint8_t  m_o;
 	uint16_t m_w;
 	uint16_t m_h;
-	uint8_t  m_cs;
-	uint8_t  m_dc;
-	uint8_t  m_rst;
 };
 

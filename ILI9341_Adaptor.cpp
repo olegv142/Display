@@ -24,29 +24,6 @@ static const uint8_t s_ILI9341_init_cmds[] PROGMEM = {
 	0
 };
 
-ILI9341_Adaptor::ILI9341_Adaptor(uint8_t orientation, uint8_t cs, uint8_t rst, uint8_t dc)
-	: m_o(orientation)
-	, m_w(orientation & 1 ? 320 : 240)
-	, m_h(orientation & 1 ? 240 : 320)
-	, m_cs(cs)
-	, m_dc(dc)
-	, m_rst(rst)
-{
-}
-
-/* Initialize interface port */
-void ILI9341_Adaptor::begin()
-{
-	SPI.begin();
-	// Use fastest clock speed
-	SPI.setClockDivider(SPI_CLOCK_DIV2);
-	pinMode(m_cs, OUTPUT);
-	pinMode(m_dc, OUTPUT);
-	pinMode(m_rst, OUTPUT);
-	digitalWrite(m_cs, HIGH);
-	digitalWrite(m_dc, HIGH);
-}
-
 /* Initialize display */
 void ILI9341_Adaptor::init()
 {
@@ -61,10 +38,7 @@ void ILI9341_Adaptor::init()
 void ILI9341_Adaptor::reset()
 {
 	// hard reset
-	digitalWrite(m_rst, LOW);
-	delay(5);
-	digitalWrite(m_rst, HIGH);
-	delay(5);
+	SPIDisplay::reset();
 	// software reset
 	write_cmd(0x1);
 	delay(5);
@@ -86,33 +60,6 @@ void ILI9341_Adaptor::enable(bool on)
 {
 	write_cmd(on ? 0x11 : 0x10);
 	if (on) delay(20);
-}
-
-/* Write bytes to the device. If cmd is true the first byte is the command */
-void ILI9341_Adaptor::write_bytes_(bool cmd, uint8_t const* bytes, uint8_t len, bool pgmem)
-{
-	digitalWrite(m_dc, cmd ? LOW : HIGH);
-	for (; len; --len, ++bytes) {
-		uint8_t byte = !pgmem ? *bytes : pgm_read_byte(bytes);
-		SPI.transfer(byte);
-		if (cmd) {
-			digitalWrite(m_dc, HIGH);
-			cmd = false;
-		}
-	}
-}
-
-/* Write sequence of commands. Each command bytes should be prefixed by the length byte. The whole sequence should be terminated by 0 byte. */
-void ILI9341_Adaptor::write_cmds_(uint8_t const* buff, bool pgmem)
-{
-	for (;;) {
-		uint8_t len = !pgmem ? *buff : pgm_read_byte(buff);
-		if (!len)
-			break;
-		++buff;
-		write_bytes_(true, buff, len, pgmem);
-		buff += len;
-	}
 }
 
 /* Setup memory write window */
