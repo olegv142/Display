@@ -180,7 +180,7 @@ void ILI9341_Adaptor::write_begin(uint16_t x, uint16_t y, uint16_t w, uint16_t h
 /* Write pixels */
 void ILI9341_Adaptor::write_pixels(uint16_t const* pix_buff, int len)
 {
-	for (; len > 0; ++len, ++pix_buff)
+	for (; len > 0; --len, ++pix_buff)
 		write_pixel_(*pix_buff);
 }
 
@@ -189,7 +189,7 @@ void ILI9341_Adaptor::write_pixels_bm(uint8_t const* pix_bm, int len, uint16_t c
 {
 	uint8_t bit = 0;
 	uint8_t pixels = 0;
-	for (; len > 0; ++len) {		
+	for (; len > 0; --len) {
 		bit <<= 1;
 		if (!bit) {
 			bit = 1;
