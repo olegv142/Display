@@ -66,7 +66,7 @@ void ILI9341_Adaptor::enable(bool on)
 void ILI9341_Adaptor::set_brightness(uint8_t val)
 {
 	uint8_t bytes[] = {0x51, val};
-	write_bytes(true, bytes, 2);
+	write_bytes(true, bytes, sizeof(bytes));
 }
 
 /* Setup memory write window */
@@ -120,7 +120,7 @@ void ILI9341_Adaptor::set_write_order_(bool flip_axis)
 	if (flip_axis) {
 		bytes[1] ^= bytes[1] & 0x20 ? 0x80 : 0x40;
 	}
-	write_bytes_(true, bytes, 2);
+	write_bytes_(true, bytes, sizeof(bytes));
 }
 
 /* Put pixel */
