@@ -25,11 +25,11 @@ static const uint8_t s_ILI9341_init_cmds[] PROGMEM = {
 };
 
 /* Initialize display */
-void ILI9341_Adaptor::init()
+void ILI9341_Adaptor::init(uint16_t fill_colour)
 {
 	reset();
 	configure();
-	fill(0);
+	fill(fill_colour);
 	// turn on RAM displaying
 	write_cmd(0x29);
 }

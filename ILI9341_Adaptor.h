@@ -28,7 +28,7 @@ public:
 	virtual uint16_t height() const { return m_h; }
 
 	/* Initialize display */
-	virtual void init();
+	virtual void init(uint16_t fill_colour = RGB16Black);
 
 	/* Enable / disable display */
 	virtual void enable(bool on);
