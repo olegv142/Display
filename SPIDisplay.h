@@ -19,7 +19,7 @@ public:
 	void unselect() { digitalWrite(m_cs, HIGH); }
 
 	/* Transfer byte */
-	void transfer(uint8_t byte) __attribute__((always_inline)) { SPI.transfer(byte); }
+	void transfer(uint8_t byte) { SPI.transfer(byte); }
 
 	/*
 	 * Helper routines. The ones with name ending by _ should be enclosed between select and unselect calls.
