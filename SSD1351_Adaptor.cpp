@@ -8,6 +8,7 @@ static const uint8_t s_SSD1351_init_cmds[] PROGMEM = {
 	2, 0xfd, 0xb1, // all commands
 	2, 0xa0, REMAP_CONFIG, // remap / color depth
 	2, 0xa2, 0,    // first line offset
+	2, 0xb3, 0xf0, // maximum frequency to reduce flicker
 	0
 };
 
