@@ -62,6 +62,13 @@ void ILI9341_Adaptor::enable(bool on)
 	if (on) delay(20);
 }
 
+/* Set brightness value */
+void ILI9341_Adaptor::set_brightness(uint8_t val)
+{
+	uint8_t bytes[] = {0x51, val};
+	write_bytes(true, bytes, 2);
+}
+
 /* Setup memory write window */
 void ILI9341_Adaptor::set_write_window_(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
 {

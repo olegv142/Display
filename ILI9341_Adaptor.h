@@ -33,6 +33,12 @@ public:
 	/* Enable / disable display */
 	virtual void enable(bool on);
 
+	/*
+	 * Set brightness value. May not work on the particular hardware in case
+	 * PWM output of the controller is left unconnected.
+	 */
+	virtual void set_brightness(uint8_t val);
+
 	/* Put pixel */
 	virtual void put_pixel(uint16_t x, uint16_t y, uint16_t colour);
 

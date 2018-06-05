@@ -26,6 +26,9 @@ public:
 	/* Enable / disable display */
 	virtual void enable(bool on) = 0;
 
+	/* Set brightness value */
+	virtual void set_brightness(uint8_t val) = 0;
+
 	/* Put pixel */
 	virtual void put_pixel(uint16_t x, uint16_t y, uint16_t colour) = 0;
 
