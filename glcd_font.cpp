@@ -5,6 +5,7 @@
 
 #include "glcd_fonts.h"
 #include "BW8DisplayAdaptor.h"
+#include "RGB16DisplayAdaptor.h"
 
 #define MAX_DATA_CHUNK 16
 
@@ -29,6 +30,26 @@ static inline uint8_t const* glcd_font_sym_data(struct glcd_font const* font, ch
 {
 	return font->data + (c - font->code_off) * glcd_font_sym_bytes(font);
 }
+
+/* Calculate printed text length */
+unsigned glcd_printed_len(const char* str, struct glcd_font const* font, int spacing)
+{
+	unsigned len = 0, empty_space = spacing > 0 ? spacing : 0;
+	for (;; ++str) {
+		char c = *str;
+		if (glcd_font_sym_valid(font, c)) {
+			uint8_t const* data = glcd_font_sym_data(font, c);
+			uint8_t w = spacing < 0 ? font->w : pgm_read_byte(data);
+			len += w + empty_space;
+		} else
+			break;
+	}
+	return len;
+}
+
+/*
+ * Monochrome display printing routines
+ */
 
 /* Put char in the specified position. Note that y is in 8 pixel groups */
 static void glcd_draw_char(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, unsigned h, uint8_t const* data)
@@ -76,22 +97,6 @@ int glcd_print_str(BW8DisplayAdaptor* d, unsigned x, unsigned y, const char* str
 	return col - x;
 }
 
-/* Calculate printed text length */
-unsigned glcd_printed_len(const char* str, struct glcd_font const* font, int spacing)
-{
-	unsigned len = 0, empty_space = spacing > 0 ? spacing : 0;
-	for (;; ++str) {
-		char c = *str;
-		if (glcd_font_sym_valid(font, c)) {
-			uint8_t const* data = glcd_font_sym_data(font, c);
-			uint8_t w = spacing < 0 ? font->w : pgm_read_byte(data);
-			len += w + empty_space;
-		} else
-			break;
-	}
-	return len;
-}
-
 /* Print string in given display area. If spacing < 0 the font will be treated as mono spacing, otherwise the specified
  * spacing will be used for variable spacing print. In case the text with is less than print area width w the remaining
  * display area will be erased. Returns the width of the text printed.
@@ -117,3 +122,94 @@ int glcd_print_str_r(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, c
 		return off + glcd_print_str(d, x + off, y, str, font, spacing);
 	}
 }
+
+/*
+ * Color display printing routines
+ */
+
+/* Put char in the specified position */
+static void glcd_draw_char(RGB16DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, unsigned h, uint8_t const* data, uint16_t colors[2])
+{
+	d->write_begin(x, y, x + w - 1, y + h * 8 - 1, true);
+	d->write_pixels_bm(data, w * h * 8, colors, true);
+	d->write_end();
+}
+
+/* Print string starting from the specified position. If spacing < 0 the font
+ * will be treated as mono spacing, otherwise the specified spacing will be used for variable spacing print.
+ * The colors[1] specifies the text color while the colors[0] will be used for background. 
+ * Returns the width of the text printed.
+ */
+int glcd_print_str(RGB16DisplayAdaptor* d, unsigned x, unsigned y, const char* str, struct glcd_font const* font, int spacing, uint16_t colors[2])
+{
+	unsigned h = glcd_font_col_bytes(font);
+	unsigned empty_space = spacing > 0 ? spacing : 0;
+	unsigned col = x;
+	for (;; ++str) {
+		char c = *str;
+		if (glcd_font_sym_valid(font, c)) {
+			uint8_t const* data = glcd_font_sym_data(font, c);
+			uint8_t w = spacing < 0 ? font->w : pgm_read_byte(data);
+			glcd_draw_char(d, col, y, w, h, data + 1, colors);
+			col += w;
+			if (empty_space) {
+				d->fill_rect(col, y, col + empty_space - 1, y + h * 8 - 1, colors[0]);
+				col += empty_space;
+			}
+		} else
+			break;
+	}
+	return col - x;
+}
+
+/* Print string in given display area. If spacing < 0 the font will be treated as mono spacing, otherwise the specified
+ * spacing will be used for variable spacing print. In case the text with is less than print area width w the remaining
+ * display area will be erased. The colors[1] specifies the text color while the colors[0] will be used for background. 
+ * Returns the width of the text printed.
+ */
+int glcd_print_str_w(RGB16DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing, uint16_t colors[2])
+{
+	int printed_w = glcd_print_str(d, x, y, str, font, spacing, colors);
+	if (printed_w < w) {
+		unsigned h = glcd_font_col_bytes(font);
+		d->fill_rect(x + printed_w, y, x + w - 1, y + h * 8 - 1, colors[0]);
+	}
+	return printed_w;
+}
+
+/* Print string right aligned. 
+ * The colors[1] specifies the text color while the colors[0] will be used for background. 
+ * Returns the offset of the printed text end.
+ */
+int glcd_print_str_r(RGB16DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing, uint16_t colors[2])
+{
+	unsigned text_w = glcd_printed_len(str, font, spacing);
+	if (text_w > w) {
+		return glcd_print_str(d, x, y, str, font, spacing, colors);
+	} else {
+		unsigned off = w - text_w;
+		unsigned h = glcd_font_col_bytes(font);
+		d->fill_rect(x, y, x + off - 1, y + h * 8 - 1, colors[0]);
+		return off + glcd_print_str(d, x + off, y, str, font, spacing, colors);
+	}
+}
+
+/* Print string centred. 
+ * The colors[1] specifies the text color while the colors[0] will be used for background. 
+ * Returns the offset of the printed text end.
+ */
+int glcd_print_str_c(RGB16DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing, uint16_t colors[2])
+{
+	unsigned text_w = glcd_printed_len(str, font, spacing);
+	if (text_w > w) {
+		return glcd_print_str(d, x, y, str, font, spacing, colors);
+	} else {
+		unsigned off = (w - text_w) / 2;
+		unsigned h = glcd_font_col_bytes(font);
+		d->fill_rect(x, y, x + off - 1, y + h * 8 - 1, colors[0]);
+		unsigned end = off + glcd_print_str(d, x + off, y, str, font, spacing, colors);
+		d->fill_rect(x + end, y, x + w - 1, y + h * 8 - 1, colors[0]);
+		return end;
+	}
+}
+
