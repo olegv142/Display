@@ -72,23 +72,9 @@ void ILI9341_Adaptor::set_brightness(uint8_t val)
 /* Setup memory write window */
 void ILI9341_Adaptor::set_write_window_(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
 {
-	x1 -= 1;
-	y1 -= 1;
 	uint8_t bytes[] = {
 		5, 0x2a, (uint8_t)(x0 >> 8), (uint8_t)(x0), (uint8_t)(x1 >> 8), (uint8_t)(x1),
 		5, 0x2b, (uint8_t)(y0 >> 8), (uint8_t)(y0), (uint8_t)(y1 >> 8), (uint8_t)(y1),
-		1, 0x2c,
-		0
-	};
-	write_cmds_(bytes);
-}
-
-/* Setup memory write position */
-void ILI9341_Adaptor::set_write_pos_(uint16_t x, uint16_t y)
-{
-	uint8_t bytes[] = {
-		3, 0x2a, (uint8_t)(x >> 8), (uint8_t)(x),
-		3, 0x2b, (uint8_t)(y >> 8), (uint8_t)(y),
 		1, 0x2c,
 		0
 	};
@@ -127,53 +113,33 @@ void ILI9341_Adaptor::set_write_order_(bool flip_axis)
 void ILI9341_Adaptor::put_pixel(uint16_t x, uint16_t y, uint16_t colour)
 {
 	select();
-	set_write_pos_(x, y);
+	set_write_window_(x, y, x, y);
 	write_pixel_(colour);
 	unselect();
 }
 
 /* Fill certain region */
-void ILI9341_Adaptor::fill_rect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t colour)
+void ILI9341_Adaptor::fill_rect(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t colour)
 {
 	select();
-	set_write_window_(x, y, x + w, y + h);
-	for (uint16_t j = 0; j < h; ++j) {
-		for (uint16_t i = 0; i < w; ++i) {
+	set_write_window_(x0, y0, x1, y1);
+	for (uint16_t j = y0; j <= y1; ++j) {
+		for (uint16_t i = x0; i <= x1; ++i) {
 			write_pixel_(colour);
 		}
 	}
 	unselect();
 }
 
-/* Draw horizontal line */
-void ILI9341_Adaptor::hline(uint16_t x, uint16_t y, uint16_t len, uint16_t colour)
-{
-	select();
-	set_write_pos_(x, y);
-	for (; len; --len) write_pixel_(colour);
-	unselect();
-}
-
-/* Draw vertical line */
-void ILI9341_Adaptor::vline(uint16_t x, uint16_t y, uint16_t len, uint16_t colour)
-{
-	select();
-	set_write_order_(true);
-	set_write_pos_(y, x);
-	for (; len; --len) write_pixel_(colour);
-	set_write_order_();
-	unselect();
-}
-
 /* Setup rectangular writing area */
-void ILI9341_Adaptor::write_begin(uint16_t x, uint16_t y, uint16_t w, uint16_t h, bool col_order)
+void ILI9341_Adaptor::write_begin(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, bool col_order)
 {
 	select();
 	if (col_order) {
 		set_write_order_(true);
-		set_write_window_(y, x, y + h, x + w);
+		set_write_window_(y0, x0, y1, x1);
 	} else {
-		set_write_window_(x, y, x + w, y + h);
+		set_write_window_(x0, y0, x1, y1);
 	}
 }
 

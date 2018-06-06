@@ -36,17 +36,22 @@ public:
 	 */
 	virtual void set_brightness(uint8_t val);
 
+	/*
+	 * Core drawing API
+	 */
+
 	/* Put pixel */
 	virtual void put_pixel(uint16_t x, uint16_t y, uint16_t colour);
 
-	/* Draw horizontal line */
-	virtual void hline(uint16_t x, uint16_t y, uint16_t len, uint16_t colour);
+	/* Fill certain region */
+	virtual void fill_rect(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t colour);
 
-	/* Draw vertical line */
-	virtual void vline(uint16_t x, uint16_t y, uint16_t len, uint16_t colour);
+	/*
+	 * Display memory writing API
+	 */
 
 	/* Setup rectangular writing area */
-	virtual void write_begin(uint16_t x, uint16_t y, uint16_t w, uint16_t h, bool col_order);
+	virtual void write_begin(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, bool col_order);
 
 	/* Write pixels */
 	virtual void write_pixels(uint16_t const* pix_buff, int len);
@@ -56,9 +61,6 @@ public:
 
 	/* End writing */
 	virtual void write_end();
-
-	/* Fill certain region */
-	virtual void fill_rect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t colour);
 
 	/*
 	 * Other non standard functions
@@ -77,8 +79,6 @@ private:
 
 	/* Setup memory write window */
 	void set_write_window_(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
-	/* Setup memory write position */
-	void set_write_pos_(uint8_t x, uint8_t y);
 	/* Setup memory write order */
 	void set_write_order_(bool vertical = false);
 	/* Write pixel RGB data */
