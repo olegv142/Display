@@ -57,10 +57,10 @@ public:
 	virtual void write_begin(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, bool col_order);
 
 	/* Write pixels */
-	virtual void write_pixels(uint16_t const* pix_buff, int len);
+	virtual void write_pixels(uint16_t const* pix_buff, int len, int pgm = false);
 
 	/* Write pixels bitmap */
-	virtual void write_pixels_bm(uint8_t const* pix_bm, int len, uint16_t colours[2]);
+	virtual void write_pixels_bm(uint8_t const* pix_bm, int len, uint16_t colours[2], int pgm = false);
 
 	/* End writing */
 	virtual void write_end();

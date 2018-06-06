@@ -47,10 +47,10 @@ public:
 	virtual void write_begin(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, bool col_order) = 0;
 
 	/* Write pixels */
-	virtual void write_pixels(uint16_t const* pix_buff, int len) = 0;
+	virtual void write_pixels(uint16_t const* pix_buff, int len, int pgm = false) = 0;
 
 	/* Write pixels bitmap */
-	virtual void write_pixels_bm(uint8_t const* pix_bm, int len, uint16_t colours[2]) = 0;
+	virtual void write_pixels_bm(uint8_t const* pix_bm, int len, uint16_t colours[2], int pgm = false) = 0;
 
 	/* End writing */
 	virtual void write_end() = 0;

@@ -144,14 +144,16 @@ void ILI9341_Adaptor::write_begin(uint16_t x0, uint16_t y0, uint16_t x1, uint16_
 }
 
 /* Write pixels */
-void ILI9341_Adaptor::write_pixels(uint16_t const* pix_buff, int len)
+void ILI9341_Adaptor::write_pixels(uint16_t const* pix_buff, int len, int pgm)
 {
-	for (; len > 0; --len, ++pix_buff)
-		write_pixel_(*pix_buff);
+	for (; len > 0; --len, ++pix_buff) {
+		uint16_t pix = !pgm ? *pix_buff : pgm_read_word(pix_buff);
+		write_pixel_(pix);
+	}
 }
 
 /* Write pixels bitmap */
-void ILI9341_Adaptor::write_pixels_bm(uint8_t const* pix_bm, int len, uint16_t colours[2])
+void ILI9341_Adaptor::write_pixels_bm(uint8_t const* pix_bm, int len, uint16_t colours[2], int pgm)
 {
 	uint8_t bit = 0;
 	uint8_t pixels = 0;
@@ -159,7 +161,8 @@ void ILI9341_Adaptor::write_pixels_bm(uint8_t const* pix_bm, int len, uint16_t c
 		bit <<= 1;
 		if (!bit) {
 			bit = 1;
-			pixels = *pix_bm++;
+			pixels = !pgm ? *pix_bm : pgm_read_byte(pix_bm);
+			++pix_bm;
 		}
 		write_pixel_(colours[(pixels & bit) != 0]);
 	}
