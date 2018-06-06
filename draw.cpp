@@ -9,14 +9,14 @@ void draw_circle_filled(
 	)
 {
 	uint16_t y = ra;
-	uint16_t K = ra * ra, D = K + 1 + ra / 4;
+	int16_t E = -1 - ra / 4;
 
 	disp->vline(cx, cy - y, 2*y + 1, color);
 	for (uint16_t x = 1; x <= ra; ++x)
 	{
-		K += 2*x - 1;
-		while (K > D) {
-			K -= 2*y - 1;
+		E += 2*x - 1;
+		while (E > 0) {
+			E -= 2*y - 1;
 			--y;
 		}
 		disp->vline(cx + x, cy - y, 2*y + 1, color);
@@ -32,14 +32,14 @@ void draw_circle_thin(
 	)
 {
 	uint16_t y = ra, last_y = ra;
-	uint16_t K = ra * ra, D = K + 1 + ra / 4;
+	int16_t E = -1 - ra / 4;
 	uint16_t l, r, u, d, len;
 
 	for (uint16_t x = 1; x <= ra; ++x)
 	{
-		K += 2*x - 1;
-		while (K > D) {
-			K -= 2*y - 1;
+		E += 2*x - 1;
+		while (E > 0) {
+			E -= 2*y - 1;
 			--y;
 		}
 
@@ -74,8 +74,8 @@ void draw_circle_thick(
 {
 	uint16_t y = ra;
 	int16_t yi = ra - b;
-	uint16_t K = ra * ra, D = K + 1 + ra / 4;
-	uint16_t Ki = yi * yi, Di = Ki + yi / 4;
+	int16_t E = -1 - ra / 4;
+	int16_t Ei = -yi / 4;
 	uint16_t l, r, u, d, len;
 
 	disp->vline(cx, cy - ra, b, color);
@@ -83,14 +83,14 @@ void draw_circle_thick(
 
 	for (uint16_t x = 1; x <= ra; ++x)
 	{
-		K  += 2*x - 1;
-		Ki += 2*x - 1;
-		while (K > D) {
-			K -= 2*y - 1;
+		E  += 2*x - 1;
+		Ei += 2*x - 1;
+		while (E > 0) {
+			E -= 2*y - 1;
 			--y;
 		}
-		while (Ki > Di && yi >= 0) {
-			Ki -= 2*yi - 1;
+		while (Ei > 0 && yi >= 0) {
+			Ei -= 2*yi - 1;
 			--yi;
 		}
 		l = cx - x;
