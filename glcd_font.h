@@ -9,13 +9,45 @@
  * created by freely available tools like MicoElectronica GLCD fonts creator.
  */
 
+/* The font descriptor */
 struct glcd_font {
-	uint8_t w;
-	uint8_t h;
-	uint8_t code_off;
-	uint8_t code_num;
-	uint8_t const* PROGMEM data;
+	uint8_t w;        // width in pixels
+	uint8_t h;        // height in pixels
+	uint8_t code_off; // the first symbol code
+	uint8_t code_num; // the number of symbols present
+	uint8_t const* PROGMEM data; // the bitmaps of all symbols stored sequentially 
+	// as w x h bytes arrays each prefixed by byte storing the actual symbol width
 };
+
+/* Check if font has given symbol */
+static inline unsigned glcd_font_sym_valid(struct glcd_font const* font, uint8_t c)
+{
+	return c && (uint8_t)c >= font->code_off && (uint8_t)c < font->code_off + font->code_num;
+}
+
+/* Query the height of the font in 8 pixel groups */
+static inline unsigned glcd_font_col_bytes(struct glcd_font const* font)
+{
+	return (font->h + 7) / 8;
+}
+
+/* Get the height of the printing area in pixels */
+static inline unsigned glcd_font_height(struct glcd_font const* font)
+{
+	return glcd_font_col_bytes(font) * 8;
+}
+
+/* Query the number of bytes occupied by every symbol */
+static inline unsigned glcd_font_sym_bytes(struct glcd_font const* font)
+{
+	return 1 + glcd_font_col_bytes(font) * font->w;
+}
+
+/* Query the data array fot the given symbol. Note that the first byte represents the actual symbol with in pixels */
+static inline uint8_t const* glcd_font_sym_data(struct glcd_font const* font, char c)
+{
+	return font->data + (c - font->code_off) * glcd_font_sym_bytes(font);
+}
 
 /* Calculate printed text length */
 unsigned glcd_printed_len(const char* str, struct glcd_font const* font, int spacing);

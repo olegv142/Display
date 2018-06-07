@@ -11,26 +11,6 @@
 
 static uint8_t s_char_buff[MAX_DATA_CHUNK];
 
-static inline unsigned glcd_font_sym_valid(struct glcd_font const* font, uint8_t c)
-{
-	return c && (uint8_t)c >= font->code_off && (uint8_t)c < font->code_off + font->code_num;
-}
-
-static inline unsigned glcd_font_col_bytes(struct glcd_font const* font)
-{
-	return (font->h + 7) / 8;
-}
-
-static inline unsigned glcd_font_sym_bytes(struct glcd_font const* font)
-{
-	return 1 + glcd_font_col_bytes(font) * font->w;
-}
-
-static inline uint8_t const* glcd_font_sym_data(struct glcd_font const* font, char c)
-{
-	return font->data + (c - font->code_off) * glcd_font_sym_bytes(font);
-}
-
 /* Calculate printed text length */
 unsigned glcd_printed_len(const char* str, struct glcd_font const* font, int spacing)
 {
