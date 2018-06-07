@@ -1,11 +1,11 @@
 # Display
 Arduino drivers for the following displays:
-| Controller | Type  | Resolution | Interface | Comments
+| Controller | Type  | Resolution | Interface | Comments |
 |--|--|--|--|--|
-| SH1106 | OLED monochrome |  128x64 | I2C | cheep
-| SSD1306 | OLED monochrome | 128x64, 128x32 | I2C | cheep and small
-| SSD1351 | OLED color | 128x128 | SPI+rst,d/c | expensive
-| ILI9341 | TFT color | 240x320 | SPI+rst,d/c | optimal value for money, feature reach, but power hungry back-lit
+| SH1106 | OLED monochrome | 128x64 | I2C | cheep |
+| SSD1306 | OLED monochrome | 128x64, 128x32 | I2C | cheep and small |
+| SSD1351 | OLED color | 128x128 | SPI+rst,d/c | expensive |
+| ILI9341 | TFT color | 240x320 | SPI+rst,d/c | optimal value for money, feature reach, but power hungry back-lit |
 
 The library has the following distinctive features:
 - Extensible class hierarchy
