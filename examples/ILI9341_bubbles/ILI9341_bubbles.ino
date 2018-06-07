@@ -9,34 +9,11 @@ void setup() {
   g_display.init();
 }
 
-static uint16_t colors[] = {
-  RGB16(0xff, 0, 0),
-  RGB16(0xff, 0x80, 0),
-  RGB16(0xff, 0, 0x80),
-  RGB16(0xff, 0x80, 0x80),
-  RGB16(0, 0xff, 0),
-  RGB16(0x80, 0xff, 0),
-  RGB16(0, 0xff, 0x80),
-  RGB16(0x80, 0xff, 0x80),
-  RGB16(0xff, 0xff, 0),
-  RGB16(0xff, 0xff, 0x80),
-  RGB16(0x80, 0, 0xff),
-  RGB16(0, 0x80, 0xff),
-  RGB16(0x80, 0x80, 0xff),
-  RGB16(0xff, 0, 0xff),
-  RGB16(0xff, 0x80, 0xff),
-  RGB16(0, 0xff, 0xff),
-  RGB16(0x80, 0xff, 0xff),
-  RGB16(0xff, 0xff, 0xff),
-};
-
 void loop() {
-  uint16_t r = random(4, 64);
-  uint16_t x = random(r, g_display.width() - r);
-  uint16_t y = random(r, g_display.height() - r);
-  uint16_t c = colors[random(0, sizeof(colors)/sizeof(*colors))];
-  draw_circle(&g_display, x, y, r, 0, c);
+  unsigned ra = random(4, 64);
+  unsigned x = random(ra, g_display.width() - ra);
+  unsigned y = random(ra, g_display.height() - ra);
+  unsigned r = 63 * random(0, 5), g = 63 * random(0, 5), b = 63 * random(0, 5);
+  draw_circle(&g_display, x, y, ra, 0, RGB16(r, g, b));
 }
-
-
 
