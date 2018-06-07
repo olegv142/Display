@@ -71,9 +71,10 @@ public:
 	 * Set scrolling range.
 	 * The scrolling can only take place along the long axis (320 pixs).
 	 * One can reserve fixed areas at both sides of the scrolling area (in the scroll direction)
-	 * by specifying scrolling range start and end offsets.
+	 * by specifying scrolling range start and end offsets. Note that the end is not included in the scrolling area.
+	 * Called with default arguments set_scroll_range() will select entire screen to scroll.
 	 */
-	void set_scroll_range(uint16_t begin, uint16_t end);
+	void set_scroll_range(uint16_t begin = 0, uint16_t end = 320);
 
 	/*
 	 * Set scrolling position. This is the index of the line (starting from the screen top) which will be displayed at the top
