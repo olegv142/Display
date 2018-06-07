@@ -13,19 +13,17 @@ public:
 	 */
 	ILI9341_Adaptor(uint8_t orientation, uint8_t cs, uint8_t rst, uint8_t dc)
 		: SPIDisplay(cs, rst, dc)
-		, m_o(orientation)
-		, m_w(orientation & 1 ? 320 : 240)
-		, m_h(orientation & 1 ? 240 : 320)
+		, m_o(orientation), m_r(0)
 			{}
 
 	/* Initialize interface port */
 	virtual void begin() { SPIDisplay::begin(); }
 
 	/* Returns display width */
-	virtual uint16_t width() const { return m_w; }
+	virtual uint16_t width() const { return (m_o + m_r) & 1 ? 320 : 240; }
 
 	/* Returns display height */
-	virtual uint16_t height() const { return m_h; }
+	virtual uint16_t height() const { return (m_o + m_r) & 1 ? 240 : 320; }
 
 	/* Initialize display */
 	virtual void init(uint16_t fill_colour = RGB16Black);
@@ -85,6 +83,12 @@ public:
 	 */
 	void set_scroll_pos(uint16_t pos);
 
+	/*
+	 * Axis rotation may be used to print text in non-horizontal direction. The rotation parameter is in the same
+	 * units as orientation parameter of the constructor. Those 2 number are just added.
+	 */
+	void rotate_axis(uint8_t r) { m_r = r; set_write_order(); }
+
 private:
 	/* Perform hard / soft reset and wake up screen from the sleep */
 	void reset();
@@ -101,6 +105,11 @@ private:
 	 * so writing will proceed in the column order.
 	 */
 	void set_write_order_(bool flip_axis = false);
+	void set_write_order(bool flip_axis = false) {
+		select();
+		set_write_order_(flip_axis);
+		unselect();
+	}
 	/* Write pixel RGB data */
 	void write_pixel_(uint16_t colour) {
 		transfer((uint8_t)(colour >> 8));
@@ -108,7 +117,6 @@ private:
 	}
 
 	uint8_t  m_o;
-	uint16_t m_w;
-	uint16_t m_h;
+	uint8_t  m_r;
 };
 

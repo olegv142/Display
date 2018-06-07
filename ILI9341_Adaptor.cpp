@@ -86,7 +86,7 @@ void ILI9341_Adaptor::set_write_window_(uint16_t x0, uint16_t y0, uint16_t x1, u
  */
 void ILI9341_Adaptor::set_write_order_(bool flip_axis)
 {
-	uint8_t o = m_o;
+	uint8_t o = m_o + m_r;
 	uint8_t bytes[2] = {0x36};
 	if (flip_axis) o += 3;
 	switch (o % 4) {
