@@ -1,5 +1,6 @@
 # Display
 Arduino drivers for the following displays:
+
 | Controller | Type  | Resolution | Interface | Comments |
 |--|--|--|--|--|
 | SH1106 | OLED monochrome | 128x64 | I2C | cheep |
