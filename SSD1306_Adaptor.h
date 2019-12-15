@@ -5,7 +5,7 @@
 #include "BW8DisplayAdaptor.h"
 
 /*
- * SH1106 based display adaptor
+ * SSD1306 based display adaptor
  */
 
 #define DISP_W 128

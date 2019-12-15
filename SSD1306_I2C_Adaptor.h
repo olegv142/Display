@@ -6,7 +6,7 @@
 #include "SSD1306_Adaptor.h"
 
 /*
- * SH1106 based display adaptor with I2C communication protocol
+ * SSD1306 based display adaptor with I2C communication protocol
  */
 
 #define SSD1306_I2C_DEF_ADDR 0x3c
