@@ -11,6 +11,7 @@ void SPIDisplay::begin()
 	pinMode(m_rst, OUTPUT);
 	digitalWrite(m_cs, HIGH);
 	digitalWrite(m_dc, HIGH);
+	reset();
 }
 
 /* Perform hardware reset */
