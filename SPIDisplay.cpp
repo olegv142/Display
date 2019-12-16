@@ -23,18 +23,25 @@ void SPIDisplay::reset()
 	delay(5);
 }
 
-/* Write bytes to the device. If cmd is true the first byte is the command */
-void SPIDisplay::write_bytes_(bool cmd, uint8_t const* bytes, uint8_t len, bool pgmem)
+/* Write bytes to the device. The first parameter determines D/C line state during transfer. */
+void SPIDisplay::write_bytes_(write_mode_t mode, uint8_t const* bytes, uint8_t len, bool pgmem)
 {
-	digitalWrite(m_dc, cmd ? LOW : HIGH);
-	for (; len; --len, ++bytes) {
-		uint8_t byte = !pgmem ? *bytes : pgm_read_byte(bytes);
+	digitalWrite(m_dc, mode == mode_data ? HIGH : LOW);
+	for (; len; --len) {
+		uint8_t byte;
+		if (bytes != NULL) {
+			byte = !pgmem ? *bytes : pgm_read_byte(bytes);
+			++bytes;
+		} else
+			byte = 0;
 		transfer(byte);
-		if (cmd) {
+		if (mode == mode_cmd_head) {
 			digitalWrite(m_dc, HIGH);
-			cmd = false;
+			mode = mode_data;
 		}
 	}
+	if (mode != mode_data)
+		digitalWrite(m_dc, HIGH);
 }
 
 /* Write sequence of commands. Each command bytes should be prefixed by the length byte. The whole sequence should be terminated by 0 byte. */
@@ -45,7 +52,7 @@ void SPIDisplay::write_cmds_(uint8_t const* buff, bool pgmem)
 		if (!len)
 			break;
 		++buff;
-		write_bytes_(true, buff, len, pgmem);
+		write_bytes_(mode_cmd_head, buff, len, pgmem);
 		buff += len;
 	}
 }
