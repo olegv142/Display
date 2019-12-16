@@ -43,7 +43,7 @@ void SSD1351_Adaptor::light_all(bool active)
 void SSD1351_Adaptor::set_brightness(uint8_t val)
 {
 	uint8_t bytes[] = {0xc7, (uint8_t)(val >> 4)};
-	write_bytes(true, bytes, 2);
+	write_bytes(mode_cmd_head, bytes, 2);
 }
 
 /* Setup memory write window */
@@ -66,7 +66,7 @@ void SSD1351_Adaptor::set_write_order_(bool vertical)
 	uint8_t bytes[] = {0xa0, REMAP_CONFIG};
 	if (vertical)
 		bytes[1] |= 1;
-	write_bytes_(true, bytes, sizeof(bytes));
+	write_bytes_(mode_cmd_head, bytes, sizeof(bytes));
 }
 
 /* Put pixel */

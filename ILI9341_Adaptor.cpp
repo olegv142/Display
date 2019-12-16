@@ -66,7 +66,7 @@ void ILI9341_Adaptor::enable(bool on)
 void ILI9341_Adaptor::set_brightness(uint8_t val)
 {
 	uint8_t bytes[] = {0x51, val};
-	write_bytes(true, bytes, sizeof(bytes));
+	write_bytes(mode_cmd_head, bytes, sizeof(bytes));
 }
 
 /* Setup memory write window */
@@ -106,7 +106,7 @@ void ILI9341_Adaptor::set_write_order_(bool flip_axis)
 	if (flip_axis) {
 		bytes[1] ^= bytes[1] & 0x20 ? 0x80 : 0x40;
 	}
-	write_bytes_(true, bytes, sizeof(bytes));
+	write_bytes_(mode_cmd_head, bytes, sizeof(bytes));
 }
 
 /* Put pixel */
@@ -185,7 +185,7 @@ void ILI9341_Adaptor::set_scroll_range(uint16_t fr, uint16_t to)
 		(uint8_t)(sa >> 8), (uint8_t)(sa),
 		(uint8_t)(ba >> 8), (uint8_t)(ba)
 	};
-	write_bytes(true, bytes, sizeof(bytes));
+	write_bytes(mode_cmd_head, bytes, sizeof(bytes));
 }
 
 /* Set scrolling position */
@@ -195,5 +195,5 @@ void ILI9341_Adaptor::set_scroll_pos(uint16_t pos)
 		0x37,
 		(uint8_t)(pos >> 8), (uint8_t)(pos)
 	};
-	write_bytes(true, bytes, sizeof(bytes));
+	write_bytes(mode_cmd_head, bytes, sizeof(bytes));
 }
