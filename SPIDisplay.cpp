@@ -26,6 +26,7 @@ void SPIDisplay::reset()
 /* Write bytes to the device. The first parameter determines D/C line state during transfer. */
 void SPIDisplay::write_bytes_(write_mode_t mode, uint8_t const* bytes, uint8_t len, bool pgmem)
 {
+	SPI.setDataMode(SPI_MODE0);
 	digitalWrite(m_dc, mode == mode_data ? HIGH : LOW);
 	for (; len; --len) {
 		uint8_t byte;
