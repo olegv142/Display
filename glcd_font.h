@@ -73,6 +73,23 @@ int glcd_print_str_w(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, c
 /* Print string right aligned. Returns the offset of the printed text end. */
 int glcd_print_str_r(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing);
 
+enum {
+	patch_none,
+	patch_strike,
+	patch_invert,
+};
+
+/* Describe the patch applied to the particular character */
+struct glcd_patch {
+	uint8_t type:4;
+	uint8_t where:4;
+	uint8_t param;
+};
+
+int glcd_print_str_ex(BW8DisplayAdaptor* d, unsigned x, unsigned y, const char* str, struct glcd_font const* font, int spacing, struct glcd_patch const* patches);
+int glcd_print_str_w_ex(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing, struct glcd_patch const* patches);
+int glcd_print_str_r_ex(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing, struct glcd_patch const* patches);
+
 /*
  * Color display printing routines
  */

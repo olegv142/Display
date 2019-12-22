@@ -32,20 +32,36 @@ unsigned glcd_printed_len(const char* str, struct glcd_font const* font, int spa
  */
 
 /* Put char in the specified position. Note that y is in 8 pixel groups */
-static void glcd_draw_char(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, unsigned h, uint8_t const* data)
+static void glcd_draw_char_ex(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, unsigned h, uint8_t const* data, struct glcd_patch const* patch)
 {
 	unsigned r, c;
 	for (r = 0; r < h; ++r, ++data)
 	{
 		uint8_t const* ptr = data;
-		uint8_t off = 0, i = 0;
+		uint8_t off = 0, i = 0, b;
 		for (c = 0; c < w; ++c, ++i, ptr += h) {
 			if (i >= MAX_DATA_CHUNK) {
 				d->write(x + off, y + r, s_char_buff, i);
 				off += i;
 				i = 0;
 			}
-			s_char_buff[i] = pgm_read_byte(ptr);
+			// Retrieve band byte
+			b = pgm_read_byte(ptr);
+			if (patch) {
+				// Apply patch if necessary
+				switch (patch->type) {
+				case patch_invert:
+					b = ~b;
+					break;
+				case patch_strike:
+					if (patch->where == r)
+						b ^= patch->param;
+					break;
+				default:
+					;
+				}
+			}
+			s_char_buff[i] = b;
 		}
 		d->write(x + off, y + r, s_char_buff, i);
 	}
@@ -55,7 +71,7 @@ static void glcd_draw_char(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigne
  * will be treated as mono spacing, otherwise the specified spacing will be used for variable spacing print.
  * Returns the width of the text printed.
  */
-int glcd_print_str(BW8DisplayAdaptor* d, unsigned x, unsigned y, const char* str, struct glcd_font const* font, int spacing)
+int glcd_print_str_ex(BW8DisplayAdaptor* d, unsigned x, unsigned y, const char* str, struct glcd_font const* font, int spacing, struct glcd_patch const* patches)
 {
 	unsigned h = glcd_font_col_bytes(font);
 	unsigned empty_space = spacing > 0 ? spacing : 0;
@@ -65,12 +81,14 @@ int glcd_print_str(BW8DisplayAdaptor* d, unsigned x, unsigned y, const char* str
 		if (glcd_font_sym_valid(font, c)) {
 			uint8_t const* data = glcd_font_sym_data(font, c);
 			uint8_t w = spacing < 0 ? font->w : pgm_read_byte(data);
-			glcd_draw_char(d, col, y, w, h, data + 1);
+			glcd_draw_char_ex(d, col, y, w, h, data + 1, patches);
 			col += w;
 			if (empty_space) {
 				d->clear_region(col, y, empty_space, h);
 				col += empty_space;
 			}
+			if (patches)
+				++patches;
 		} else
 			break;
 	}
@@ -81,9 +99,9 @@ int glcd_print_str(BW8DisplayAdaptor* d, unsigned x, unsigned y, const char* str
  * spacing will be used for variable spacing print. In case the text with is less than print area width w the remaining
  * display area will be erased. Returns the width of the text printed.
  */
-int glcd_print_str_w(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing)
+int glcd_print_str_w_ex(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing, struct glcd_patch const* patches)
 {
-	int printed_w = glcd_print_str(d, x, y, str, font, spacing);
+	int printed_w = glcd_print_str_ex(d, x, y, str, font, spacing, patches);
 	if (printed_w < w) {
 		d->clear_region(x + printed_w, y, w - printed_w, glcd_font_col_bytes(font));
 	}
@@ -91,16 +109,31 @@ int glcd_print_str_w(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, c
 }
 
 /* Print string right aligned. Returns the offset of the printed text end. */
-int glcd_print_str_r(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing)
+int glcd_print_str_r_ex(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing, struct glcd_patch const* patches)
 {
 	unsigned text_w = glcd_printed_len(str, font, spacing);
 	if (text_w > w) {
-		return glcd_print_str(d, x, y, str, font, spacing);
+		return glcd_print_str_ex(d, x, y, str, font, spacing, patches);
 	} else {
 		unsigned off = w - text_w;
 		d->clear_region(x, y, off, glcd_font_col_bytes(font));
-		return off + glcd_print_str(d, x + off, y, str, font, spacing);
+		return off + glcd_print_str_ex(d, x + off, y, str, font, spacing, patches);
 	}
+}
+
+int glcd_print_str(BW8DisplayAdaptor* d, unsigned x, unsigned y, const char* str, struct glcd_font const* font, int spacing)
+{
+	return glcd_print_str_ex(d, x, y, str, font, spacing, NULL);
+}
+
+int glcd_print_str_w(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing)
+{
+	return glcd_print_str_w_ex(d, x, y, w, str, font, spacing, NULL);
+}
+
+int glcd_print_str_r(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing)
+{
+	return glcd_print_str_r_ex(d, x, y, w, str, font, spacing, NULL);
 }
 
 /*
