@@ -15,10 +15,13 @@ typedef enum {
 	mode_cmd_head, // only heading byte is command
 } write_mode_t;
 
+#define SPI_DISPLAY_SETTINGS 8000000, MSBFIRST, SPI_MODE0
+
 class SPIDisplay {
 public:
 	SPIDisplay(uint8_t cs, uint8_t rst, uint8_t dc)
-		: m_cs(cs), m_dc(dc), m_rst(rst) {}
+		: m_settings(SPI_DISPLAY_SETTINGS)
+		, m_cs(cs), m_dc(dc), m_rst(rst) {}
 
 	/* Initialize interface port */
 	void begin();
@@ -27,8 +30,14 @@ public:
 	void reset();
 
 	/* Chip select control helpers */
-	void select()   { digitalWrite(m_cs, LOW); }
-	void unselect() { digitalWrite(m_cs, HIGH); }
+	void select() {
+		digitalWrite(m_cs, LOW);
+		SPI.beginTransaction(m_settings);
+	}
+	void unselect() {
+		SPI.endTransaction();
+		digitalWrite(m_cs, HIGH);
+	}
 
 	/* Transfer byte */
 	void transfer(uint8_t byte) { SPI.transfer(byte); }
@@ -62,7 +71,8 @@ public:
 	}
 
 private:
-	uint8_t  m_cs;
-	uint8_t  m_dc;
-	uint8_t  m_rst;
+	SPISettings m_settings;
+	uint8_t     m_cs;
+	uint8_t     m_dc;
+	uint8_t     m_rst;
 };

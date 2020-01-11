@@ -4,8 +4,6 @@
 void SPIDisplay::begin()
 {
 	SPI.begin();
-	// Use fastest clock speed
-	SPI.setClockDivider(SPI_CLOCK_DIV2);
 	pinMode(m_cs, OUTPUT);
 	pinMode(m_dc, OUTPUT);
 	pinMode(m_rst, OUTPUT);
@@ -26,7 +24,6 @@ void SPIDisplay::reset()
 /* Write bytes to the device. The first parameter determines D/C line state during transfer. */
 void SPIDisplay::write_bytes_(write_mode_t mode, uint8_t const* bytes, uint8_t len, bool pgmem)
 {
-	SPI.setDataMode(SPI_MODE0);
 	digitalWrite(m_dc, mode == mode_data ? HIGH : LOW);
 	for (; len; --len) {
 		uint8_t byte;
