@@ -13,6 +13,7 @@ extern struct glcd_font g_font_Lucida12x12Cyr;
 extern struct glcd_font g_font_Tahoma12x11Bld;
 extern struct glcd_font g_font_Tahoma12x11BldD; /* Digits and special symbols only */
 extern struct glcd_font g_font_Tahoma15x16;
+extern struct glcd_font g_font_Tahoma15x16Small; /* Small Latin letters only */
 extern struct glcd_font g_font_Tahoma19x20;
 extern struct glcd_font g_font_Tahoma19x20dg; /* Digits only */
 extern struct glcd_font g_font_Tahoma34x38;
