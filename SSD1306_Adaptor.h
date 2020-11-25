@@ -5,7 +5,7 @@
 #include "BW8DisplayAdaptor.h"
 
 /*
- * SSD1306 based display adaptor
+ * SSD1306/9 based display adaptor
  */
 
 #define DISP_W 128
@@ -19,7 +19,9 @@ class SSD1306_Adaptor : public BW8DisplayAdaptor {
 public:
 	SSD1306_Adaptor() : m_height(64), m_mode(0x12) {}
 
-	/* Set display model. Must be called before init() */
+	/* Set display model. Must be called before init().
+	 * The 128x64 mode is set default and need not to be set explicitly.
+	 */
 	void set_model(SSD1306_Model_t m);
 
 	bool probe();
