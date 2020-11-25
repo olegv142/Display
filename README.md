@@ -6,6 +6,7 @@ Arduino drivers for the following displays:
 | SH1106 | OLED monochrome | 128x64 | I2C | cheap |
 | SSD1305 | OLED monochrome | 128x32 | SPI+rst+d/c | reasonably large, low resolution |
 | SSD1306 | OLED monochrome | 128x64, 128x32 | I2C | cheap and small |
+| SSD1309 | OLED monochrome | 128x64 | SPI+rst+d/c | reasonably large, protocol-compatible with 1306 |
 | SSD1351 | OLED color | 128x128 | SPI+rst+d/c | expensive |
 | ILI9341 | TFT color | 240x320 | SPI+rst+d/c | optimal value for money, feature reach, but power hungry back-lit |
 
