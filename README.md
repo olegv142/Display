@@ -3,7 +3,7 @@ Arduino drivers for the following displays:
 
 | Controller | Type  | Resolution | Interface | Comments |
 |--|--|--|--|--|
-| SH1106 | OLED monochrome | 128x64 | I2C | cheap |
+| SH1106 | OLED monochrome | 128x64 | I2C, SPI+rst+d/c | cheap |
 | SSD1305 | OLED monochrome | 128x32 | SPI+rst+d/c | reasonably large, low resolution |
 | SSD1306 | OLED monochrome | 128x64, 128x32 | I2C | cheap and small |
 | SSD1309 | OLED monochrome | 128x64 | SPI+rst+d/c | reasonably large, protocol-compatible with 1306 |
