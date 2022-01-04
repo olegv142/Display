@@ -102,7 +102,7 @@ int glcd_print_str_ex(BW8DisplayAdaptor* d, unsigned x, unsigned y, const char* 
 int glcd_print_str_w_ex(BW8DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing, struct glcd_patch const* patches)
 {
 	int printed_w = glcd_print_str_ex(d, x, y, str, font, spacing, patches);
-	if (printed_w < w) {
+	if ((unsigned)printed_w < w) {
 		d->clear_region(x + printed_w, y, w - printed_w, glcd_font_col_bytes(font));
 	}
 	return printed_w;
@@ -183,7 +183,7 @@ int glcd_print_str(RGB16DisplayAdaptor* d, unsigned x, unsigned y, const char* s
 int glcd_print_str_w(RGB16DisplayAdaptor* d, unsigned x, unsigned y, unsigned w, const char* str, struct glcd_font const* font, int spacing, uint16_t colors[2])
 {
 	int printed_w = glcd_print_str(d, x, y, str, font, spacing, colors);
-	if (printed_w < w) {
+	if ((unsigned)printed_w < w) {
 		unsigned h = glcd_font_col_bytes(font);
 		d->fill_rect(x + printed_w, y, x + w - 1, y + h * 8 - 1, colors[0]);
 	}
