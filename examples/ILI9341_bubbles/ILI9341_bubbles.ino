@@ -1,7 +1,7 @@
-#include "ILI9341_Adaptor.h"
+#include "GenRGB16Adaptor.h"
 #include "draw.h"
 
-ILI9341_Adaptor g_display(1, 14, 15, 16);
+GenRGB16Adaptor g_display(240, 320, 1, 10, 19, 18);
 
 void setup() {
   // put your setup code here, to run once:

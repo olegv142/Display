@@ -1,7 +1,7 @@
-#include "ILI9341_Adaptor.h"
+#include "GenRGB16Adaptor.h"
 #include "glcd_fonts.h"
 
-ILI9341_Adaptor g_display(0, 14, 15, 16);
+GenRGB16Adaptor g_display(240, 320, 0, 10, 19, 18);
 
 void print_text(uint8_t o)
 {
