@@ -1,7 +1,7 @@
-#include "ST7796_Adaptor.h"
+#include "GenRGB16Adaptor.h"
 #include "draw.h"
 
-ST7796_Adaptor g_display(0, 10, 19, 18);
+GenRGB16Adaptor g_display(320, 480, 0, 10, 19, 18);
 
 void setup() {
   // put your setup code here, to run once:

@@ -1,4 +1,4 @@
-#include "ST7796_Adaptor.h"
+#include "GenRGB16Adaptor.h"
 #include "glcd_fonts.h"
 
 /*
@@ -8,7 +8,7 @@
 #define TEXT_MARGIN 16
 #define TEXT_SPACING 1
 
-ST7796_Adaptor g_display(0, 10, 19, 18);
+GenRGB16Adaptor g_display(320, 480, 0, 10, 19, 18);
 
 int g_cnt;
 int g_line_h;
