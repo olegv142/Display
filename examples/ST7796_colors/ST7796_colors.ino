@@ -1,5 +1,4 @@
 #include "GenRGB16Adaptor.h"
-#include "glcd_fonts.h"
 
 GenRGB16Adaptor g_display(320, 480, 0, 10, 19, 18);
 
