@@ -12,7 +12,7 @@ public:
 	 * Create display adaptor instance given the dimensions, screen orientation and control lines pin numbers.
 	 * The width (w) argument should correspond to smaller axis, while the height (h) should correspond to the longer one.
 	 */
-	GenRGB16Adaptor(uint16_t w, uint16_t h, uint8_t orientation, uint8_t cs, uint8_t rst, uint8_t dc)
+	GenRGB16Adaptor(uint16_t w, uint16_t h, uint8_t orientation, Pin cs, Pin rst, Pin dc)
 		: SPIDisplay(cs, rst, dc)
 		, m_w(w), m_h(h), m_o(orientation), m_r(0)
 			{}

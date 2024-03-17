@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Arduino.h>
+#include "common.h"
 #include <SPI.h>
 
 /* The write mode determines the state of the Data/Command interface line during transfer.
@@ -19,7 +19,7 @@ typedef enum {
 
 class SPIDisplay {
 public:
-	SPIDisplay(uint8_t cs, uint8_t rst, uint8_t dc)
+	SPIDisplay(Pin cs, Pin rst, Pin dc)
 		: m_settings(SPI_DISPLAY_SETTINGS)
 		, m_cs(cs), m_dc(dc), m_rst(rst) {}
 
@@ -72,7 +72,7 @@ public:
 
 private:
 	SPISettings m_settings;
-	uint8_t     m_cs;
-	uint8_t     m_dc;
-	uint8_t     m_rst;
+	Pin     m_cs;
+	Pin     m_dc;
+	Pin     m_rst;
 };
