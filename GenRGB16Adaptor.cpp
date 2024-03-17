@@ -34,7 +34,8 @@ void GenRGB16Adaptor::configure()
 {
 	select();
 	write_cmds_(s_ST7796_init_cmds, true);
-	set_write_order_();
+	if (m_invert)
+		write_cmd(0x21);
 	unselect();
 }
 

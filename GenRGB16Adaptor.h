@@ -17,8 +17,12 @@ public:
 		, m_w(w), m_h(h), m_o(orientation), m_r(0)
 		, m_px(0), m_py(0), m_bgr(true)
 		, m_xflip(false), m_yflip(false)
-		, m_madval(-1)
+		, m_invert(false), m_madval(-1)
 			{}
+	/*
+	 * The following configuration functions should be called before init()
+	 * otherwise they may not take effect.
+	 */
 
 	/* Set display area padding */
 	void set_padding(uint16_t x_padding, uint16_t y_padding) {
@@ -31,6 +35,10 @@ public:
 	/* Configure physical display flipping */
 	void set_flip(bool xflip, bool yflip) {
 		m_xflip = xflip; m_yflip = yflip;
+	}
+	/* Setup colors inversion */
+	void set_inversion(bool flag) {
+		m_invert = flag;
 	}
 
 	/* Initialize interface port */
@@ -143,6 +151,7 @@ private:
 	bool     m_bgr;
 	bool     m_xflip;
 	bool     m_yflip;
+	bool     m_invert;
 	int16_t  m_madval;
 };
 
