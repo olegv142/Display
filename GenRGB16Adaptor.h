@@ -17,6 +17,7 @@ public:
 		, m_w(w), m_h(h), m_o(orientation), m_r(0)
 		, m_px(0), m_py(0), m_bgr(true)
 		, m_xflip(false), m_yflip(false)
+		, m_madval(-1)
 			{}
 
 	/* Set display area padding */
@@ -142,5 +143,6 @@ private:
 	bool     m_bgr;
 	bool     m_xflip;
 	bool     m_yflip;
+	int16_t  m_madval;
 };
 

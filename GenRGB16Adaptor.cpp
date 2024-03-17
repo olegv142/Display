@@ -21,6 +21,7 @@ void GenRGB16Adaptor::reset()
 {
 	// hard reset
 	SPIDisplay::reset();
+	m_madval = -1;
 	// software reset
 	write_cmd(0x1);
 	delay(5);
@@ -96,8 +97,11 @@ void GenRGB16Adaptor::set_write_order_(bool flip_axis)
 		mad ^= my;
 	if (m_bgr)
 		mad |= 8;
-	uint8_t bytes[2] = {0x36, mad};	
+	if (mad == m_madval)
+		return;
+	uint8_t bytes[2] = {0x36, mad};
 	write_bytes_(mode_cmd_head, bytes, sizeof(bytes));
+	m_madval = mad;
 }
 
 /* Put pixel */
