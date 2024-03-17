@@ -15,7 +15,22 @@ public:
 	GenRGB16Adaptor(uint16_t w, uint16_t h, uint8_t orientation, Pin cs, Pin rst, Pin dc)
 		: SPIDisplay(cs, rst, dc)
 		, m_w(w), m_h(h), m_o(orientation), m_r(0)
+		, m_px(0), m_py(0), m_bgr(true)
+		, m_xflip(false), m_yflip(false)
 			{}
+
+	/* Set display area padding */
+	void set_padding(uint16_t x_padding, uint16_t y_padding) {
+		m_px = x_padding; m_py = y_padding;
+	}
+	/* Configure rgb/bgr physical display mode (bgr is default) */
+	void set_bgr(bool flag) {
+		m_bgr = flag;
+	}
+	/* Configure physical display flipping */
+	void set_flip(bool xflip, bool yflip) {
+		m_xflip = xflip; m_yflip = yflip;
+	}
 
 	/* Initialize interface port */
 	virtual void begin() { SPIDisplay::begin(); }
@@ -89,7 +104,7 @@ public:
 	 * Axis rotation may be used to print text in non-horizontal direction. The rotation parameter is in the same
 	 * units as orientation parameter of the constructor. Those 2 number are just added.
 	 */
-	void rotate_axis(uint8_t r) { m_r = r; set_write_order(); }
+	void rotate_axis(uint8_t r) { m_r = r; }
 
 private:
 	/* Perform hard / soft reset and wake up screen from the sleep */
@@ -122,5 +137,10 @@ private:
 	uint16_t m_h;
 	uint8_t  m_o;
 	uint8_t  m_r;
+	uint16_t m_px;
+	uint16_t m_py;
+	bool     m_bgr;
+	bool     m_xflip;
+	bool     m_yflip;
 };
 

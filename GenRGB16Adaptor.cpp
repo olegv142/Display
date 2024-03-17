@@ -69,48 +69,55 @@ void GenRGB16Adaptor::set_write_window_(uint16_t x0, uint16_t y0, uint16_t x1, u
 void GenRGB16Adaptor::set_write_order_(bool flip_axis)
 {
 	uint8_t o = m_o + m_r;
-	uint8_t bytes[2] = {0x36};
+	uint8_t const mx = 1 << 6;
+	uint8_t const my = 1 << 7;
+	uint8_t const mv = 1 << 5;
 	if (flip_axis) o += 3;
+	uint8_t mad;
 	switch (o % 4) {
 	case 0:
-		bytes[1] = 0x48;
+		mad = mx;
 		break;
 	case 1:
-		bytes[1] = 0x28;
+		mad = mv;
 		break;
 	case 2:
-		bytes[1] = 0x88;
+		mad = my;
 		break;
 	case 3:
-		bytes[1] = 0xE8;
+		mad = mx | my | mv;
 		break;
 	}
-	if (flip_axis) {
-		bytes[1] ^= bytes[1] & 0x20 ? 0x80 : 0x40;
-	}
+	if (flip_axis)
+		mad ^= mad & mv ? my : mx;
+	if (m_xflip)
+		mad ^= mx;
+	if (m_yflip)
+		mad ^= my;
+	if (m_bgr)
+		mad |= 8;
+	uint8_t bytes[2] = {0x36, mad};	
 	write_bytes_(mode_cmd_head, bytes, sizeof(bytes));
 }
 
 /* Put pixel */
 void GenRGB16Adaptor::put_pixel(uint16_t x, uint16_t y, uint16_t colour)
 {
-	select();
-	set_write_window_(x, y, x, y);
+	write_begin(x, y, x, y, false);
 	write_pixel_(colour);
-	unselect();
+	write_end();
 }
 
 /* Fill certain region */
 void GenRGB16Adaptor::fill_rect(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t colour)
 {
-	select();
-	set_write_window_(x0, y0, x1, y1);
+	write_begin(x0, y0, x1, y1, false);
 	for (uint16_t j = y0; j <= y1; ++j) {
 		for (uint16_t i = x0; i <= x1; ++i) {
 			write_pixel_(colour);
 		}
 	}
-	unselect();
+	write_end();
 }
 
 /* Setup rectangular writing area */
@@ -119,9 +126,10 @@ void GenRGB16Adaptor::write_begin(uint16_t x0, uint16_t y0, uint16_t x1, uint16_
 	select();
 	if (col_order) {
 		set_write_order_(true);
-		set_write_window_(y0, x0, y1, x1);
+		set_write_window_(y0 + m_py, x0 + m_px, y1 + m_py, x1 + m_px);
 	} else {
-		set_write_window_(x0, y0, x1, y1);
+		set_write_order_(false);
+		set_write_window_(x0 + m_px, y0 + m_py, x1 + m_px, y1 + m_py);
 	}
 }
 
@@ -153,7 +161,6 @@ void GenRGB16Adaptor::write_pixels_bm(uint8_t const* pix_bm, int len, uint16_t c
 /* End writing */
 void GenRGB16Adaptor::write_end()
 {
-	set_write_order_();
 	unselect();
 }
 
@@ -162,7 +169,9 @@ void GenRGB16Adaptor::set_scroll_range(uint16_t fr, uint16_t to)
 {
 	if (!to)
 		to = m_h;
-	uint16_t sa = to - fr, ba = m_h - to;
+	fr += m_py; to += m_py;
+	// Assume real height is m_h + 2*m_py
+	uint16_t sa = to - fr, ba = m_h + m_py + m_py - to;
 	uint8_t bytes[] = {
 		0x33,
 		(uint8_t)(fr >> 8), (uint8_t)(fr),
@@ -175,6 +184,7 @@ void GenRGB16Adaptor::set_scroll_range(uint16_t fr, uint16_t to)
 /* Set scrolling position */
 void GenRGB16Adaptor::set_scroll_pos(uint16_t pos)
 {
+	pos += m_py;
 	uint8_t bytes[] = {
 		0x37,
 		(uint8_t)(pos >> 8), (uint8_t)(pos)
