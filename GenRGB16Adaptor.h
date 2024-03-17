@@ -6,24 +6,25 @@
 /*
  * ST7796 display low level interface
  */
-class ST7796_Adaptor : public RGB16DisplayAdaptor, protected SPIDisplay {
+class GenRGB16Adaptor : public RGB16DisplayAdaptor, protected SPIDisplay {
 public:
 	/*
-	 * Create display adaptor instance given the screen orientation and control lines pin numbers.
+	 * Create display adaptor instance given the dimensions, screen orientation and control lines pin numbers.
+	 * The width (w) argument should correspond to smaller axis, while the height (h) should correspond to the longer one.
 	 */
-	ST7796_Adaptor(uint8_t orientation, uint8_t cs, uint8_t rst, uint8_t dc)
+	GenRGB16Adaptor(uint16_t w, uint16_t h, uint8_t orientation, uint8_t cs, uint8_t rst, uint8_t dc)
 		: SPIDisplay(cs, rst, dc)
-		, m_o(orientation), m_r(0)
+		, m_w(w), m_h(h), m_o(orientation), m_r(0)
 			{}
 
 	/* Initialize interface port */
 	virtual void begin() { SPIDisplay::begin(); }
 
 	/* Returns display width */
-	virtual uint16_t width() const { return (m_o + m_r) & 1 ? 480 : 320; }
+	virtual uint16_t width() const { return (m_o + m_r) & 1 ? m_h : m_w; }
 
 	/* Returns display height */
-	virtual uint16_t height() const { return (m_o + m_r) & 1 ? 320 : 480; }
+	virtual uint16_t height() const { return (m_o + m_r) & 1 ? m_w : m_h; }
 
 	/* Initialize display */
 	virtual void init(uint16_t fill_colour = RGB16Black);
@@ -69,12 +70,12 @@ public:
 
 	/*
 	 * Set scrolling range.
-	 * The scrolling can only take place along the long axis (480 pixs).
+	 * The scrolling can only take place along the long axis.
 	 * One can reserve fixed areas at both sides of the scrolling area (in the scroll direction)
 	 * by specifying scrolling range start and end offsets. Note that the end is not included in the scrolling area.
 	 * Called with default arguments set_scroll_range() will select entire screen to scroll.
 	 */
-	void set_scroll_range(uint16_t begin = 0, uint16_t end = 480);
+	void set_scroll_range(uint16_t begin = 0, uint16_t end = 0);
 
 	/*
 	 * Set scrolling position. This is the index of the line (starting from the screen top) which will be displayed at the top
@@ -117,6 +118,8 @@ private:
 		transfer((uint8_t)(colour));
 	}
 
+	uint16_t m_w;
+	uint16_t m_h;
 	uint8_t  m_o;
 	uint8_t  m_r;
 };

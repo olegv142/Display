@@ -1,4 +1,4 @@
-#include "ST7796_Adaptor.h"
+#include "GenRGB16Adaptor.h"
 
 /* The power-up initialization configuration. Taken from MI0283QT-9A screen datasheet. */
 static const uint8_t s_ST7796_init_cmds[] PROGMEM = {
@@ -7,7 +7,7 @@ static const uint8_t s_ST7796_init_cmds[] PROGMEM = {
 };
 
 /* Initialize display */
-void ST7796_Adaptor::init(uint16_t fill_colour)
+void GenRGB16Adaptor::init(uint16_t fill_colour)
 {
 	reset();
 	configure();
@@ -17,7 +17,7 @@ void ST7796_Adaptor::init(uint16_t fill_colour)
 }
 
 /* Perform hard / soft reset and wake up screen from the sleep */
-void ST7796_Adaptor::reset()
+void GenRGB16Adaptor::reset()
 {
 	// hard reset
 	SPIDisplay::reset();
@@ -29,7 +29,7 @@ void ST7796_Adaptor::reset()
 }
 
 /* Push power-up configuration */
-void ST7796_Adaptor::configure()
+void GenRGB16Adaptor::configure()
 {
 	select();
 	write_cmds_(s_ST7796_init_cmds, true);
@@ -38,21 +38,21 @@ void ST7796_Adaptor::configure()
 }
 
 /* Enable / disable display */
-void ST7796_Adaptor::enable(bool on)
+void GenRGB16Adaptor::enable(bool on)
 {
 	write_cmd(on ? 0x11 : 0x10);
 	if (on) delay(20);
 }
 
 /* Set brightness value */
-void ST7796_Adaptor::set_brightness(uint8_t val)
+void GenRGB16Adaptor::set_brightness(uint8_t val)
 {
 	uint8_t bytes[] = {0x51, val};
 	write_bytes(mode_cmd_head, bytes, sizeof(bytes));
 }
 
 /* Setup memory write window */
-void ST7796_Adaptor::set_write_window_(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
+void GenRGB16Adaptor::set_write_window_(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
 {
 	uint8_t bytes[] = {
 		5, 0x2a, (uint8_t)(x0 >> 8), (uint8_t)(x0), (uint8_t)(x1 >> 8), (uint8_t)(x1),
@@ -66,7 +66,7 @@ void ST7796_Adaptor::set_write_window_(uint16_t x0, uint16_t y0, uint16_t x1, ui
 /* Setup memory write order according to the screen orientation and optionally flip axis
  * so writing will proceed in the column order.
  */
-void ST7796_Adaptor::set_write_order_(bool flip_axis)
+void GenRGB16Adaptor::set_write_order_(bool flip_axis)
 {
 	uint8_t o = m_o + m_r;
 	uint8_t bytes[2] = {0x36};
@@ -92,7 +92,7 @@ void ST7796_Adaptor::set_write_order_(bool flip_axis)
 }
 
 /* Put pixel */
-void ST7796_Adaptor::put_pixel(uint16_t x, uint16_t y, uint16_t colour)
+void GenRGB16Adaptor::put_pixel(uint16_t x, uint16_t y, uint16_t colour)
 {
 	select();
 	set_write_window_(x, y, x, y);
@@ -101,7 +101,7 @@ void ST7796_Adaptor::put_pixel(uint16_t x, uint16_t y, uint16_t colour)
 }
 
 /* Fill certain region */
-void ST7796_Adaptor::fill_rect(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t colour)
+void GenRGB16Adaptor::fill_rect(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t colour)
 {
 	select();
 	set_write_window_(x0, y0, x1, y1);
@@ -114,7 +114,7 @@ void ST7796_Adaptor::fill_rect(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y
 }
 
 /* Setup rectangular writing area */
-void ST7796_Adaptor::write_begin(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, bool col_order)
+void GenRGB16Adaptor::write_begin(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, bool col_order)
 {
 	select();
 	if (col_order) {
@@ -126,7 +126,7 @@ void ST7796_Adaptor::write_begin(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t
 }
 
 /* Write pixels */
-void ST7796_Adaptor::write_pixels(uint16_t const* pix_buff, int len, int pgm)
+void GenRGB16Adaptor::write_pixels(uint16_t const* pix_buff, int len, int pgm)
 {
 	for (; len > 0; --len, ++pix_buff) {
 		uint16_t pix = !pgm ? *pix_buff : pgm_read_word(pix_buff);
@@ -135,7 +135,7 @@ void ST7796_Adaptor::write_pixels(uint16_t const* pix_buff, int len, int pgm)
 }
 
 /* Write pixels bitmap */
-void ST7796_Adaptor::write_pixels_bm(uint8_t const* pix_bm, int len, uint16_t colours[2], int pgm)
+void GenRGB16Adaptor::write_pixels_bm(uint8_t const* pix_bm, int len, uint16_t colours[2], int pgm)
 {
 	uint8_t bit = 0;
 	uint8_t pixels = 0;
@@ -151,16 +151,18 @@ void ST7796_Adaptor::write_pixels_bm(uint8_t const* pix_bm, int len, uint16_t co
 }
 
 /* End writing */
-void ST7796_Adaptor::write_end()
+void GenRGB16Adaptor::write_end()
 {
 	set_write_order_();
 	unselect();
 }
 
 /* Set scrolling region */
-void ST7796_Adaptor::set_scroll_range(uint16_t fr, uint16_t to)
+void GenRGB16Adaptor::set_scroll_range(uint16_t fr, uint16_t to)
 {
-	uint16_t sa = to - fr, ba = 480 - to;
+	if (!to)
+		to = m_h;
+	uint16_t sa = to - fr, ba = m_h - to;
 	uint8_t bytes[] = {
 		0x33,
 		(uint8_t)(fr >> 8), (uint8_t)(fr),
@@ -171,7 +173,7 @@ void ST7796_Adaptor::set_scroll_range(uint16_t fr, uint16_t to)
 }
 
 /* Set scrolling position */
-void ST7796_Adaptor::set_scroll_pos(uint16_t pos)
+void GenRGB16Adaptor::set_scroll_pos(uint16_t pos)
 {
 	uint8_t bytes[] = {
 		0x37,
