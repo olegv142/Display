@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common.h"
+#include "xcommon.h"
 
 /* The write mode determines the state of the Data/Command interface line during transfer.
  * The data mode is used for display RAM writing. Commands used to have parameters that follow the command byte.
