@@ -1,7 +1,6 @@
 #pragma once
 
 #include "common.h"
-#include <SPI.h>
 
 /* The write mode determines the state of the Data/Command interface line during transfer.
  * The data mode is used for display RAM writing. Commands used to have parameters that follow the command byte.
@@ -15,7 +14,9 @@ typedef enum {
 	mode_cmd_head, // only heading byte is command
 } write_mode_t;
 
+#ifndef SPI_DISPLAY_SETTINGS
 #define SPI_DISPLAY_SETTINGS 8000000, MSBFIRST, SPI_MODE0
+#endif
 
 class SPIDisplay {
 public:
@@ -71,7 +72,7 @@ public:
 	}
 
 private:
-	SPISettings m_settings;
+	spi_settings_t m_settings;
 	Pin     m_cs;
 	Pin     m_dc;
 	Pin     m_rst;
