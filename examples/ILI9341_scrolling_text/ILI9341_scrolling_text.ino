@@ -18,6 +18,7 @@ struct glcd_font const* g_font = &g_font_Tahoma15x16;
 uint16_t g_colors[] = {RGB16Black, RGB16Green};
 
 void setup() {
+  g_display.set_bgr(true);
   g_display.begin();
   g_display.init();
 

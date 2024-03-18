@@ -7,7 +7,6 @@ void setup() {
   // put your setup code here, to run once:
   g_display.set_padding(2, 1);
   g_display.set_flip(true, false);
-  g_display.set_bgr(false);
 
   g_display.begin();
   g_display.init();

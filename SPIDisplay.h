@@ -67,8 +67,13 @@ public:
 	}
 
 	/* Write single command without parameters */
+	void write_cmd_(uint8_t cmd) {
+		write_bytes_(mode_cmd, &cmd, 1, false);
+	}
 	void write_cmd(uint8_t cmd) {
-		write_bytes(mode_cmd, &cmd, 1, false);
+		select();
+		write_cmd_(cmd);
+		unselect();
 	}
 
 private:

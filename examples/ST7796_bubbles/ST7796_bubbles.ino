@@ -5,6 +5,7 @@ GenRGB16Adaptor g_display(320, 480, 0, 10, 19, 18);
 
 void setup() {
   // put your setup code here, to run once:
+  g_display.set_bgr(true);
   g_display.begin();
   g_display.init();
 }

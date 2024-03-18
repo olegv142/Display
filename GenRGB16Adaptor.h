@@ -15,9 +15,10 @@ public:
 	GenRGB16Adaptor(uint16_t w, uint16_t h, uint8_t orientation, Pin cs, Pin rst, Pin dc)
 		: SPIDisplay(cs, rst, dc)
 		, m_w(w), m_h(h), m_o(orientation), m_r(0)
-		, m_px(0), m_py(0), m_bgr(true)
+		, m_px(0), m_py(0), m_bgr(false)
 		, m_xflip(false), m_yflip(false)
-		, m_invert(false), m_madval(-1)
+		, m_invert(false), m_gamma(-1)
+		, m_madval(-1)
 			{}
 	/*
 	 * The following configuration functions should be called before init()
@@ -28,7 +29,7 @@ public:
 	void set_padding(uint16_t x_padding, uint16_t y_padding) {
 		m_px = x_padding; m_py = y_padding;
 	}
-	/* Configure rgb/bgr physical display mode (bgr is default) */
+	/* Configure rgb/bgr physical display mode (default is rgb / false) */
 	void set_bgr(bool flag) {
 		m_bgr = flag;
 	}
@@ -39,6 +40,10 @@ public:
 	/* Setup colors inversion */
 	void set_inversion(bool flag) {
 		m_invert = flag;
+	}
+	/* Set gamma. Valid values are 0..3. The effect may depend on inversion setting. Default is 0. */
+	void set_gamma(uint8_t gamma) {
+		m_gamma = gamma;
 	}
 
 	/* Initialize interface port */
@@ -152,6 +157,7 @@ private:
 	bool     m_xflip;
 	bool     m_yflip;
 	bool     m_invert;
+	int8_t   m_gamma;
 	int16_t  m_madval;
 };
 

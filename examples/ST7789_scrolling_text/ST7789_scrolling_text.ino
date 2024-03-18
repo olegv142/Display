@@ -20,7 +20,6 @@ uint16_t g_colors[] = {RGB16Black, RGB16Green};
 void setup() {
   g_display.set_flip(true, false);
   g_display.set_inversion(true);
-  g_display.set_bgr(false);
 
   g_display.begin();
   g_display.init();

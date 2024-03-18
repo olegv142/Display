@@ -14,6 +14,7 @@ void print_text(uint8_t o)
 
 void setup() {
   // put your setup code here, to run once:
+  g_display.set_bgr(true);
   g_display.begin();
   g_display.init();
 
