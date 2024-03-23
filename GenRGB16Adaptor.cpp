@@ -132,13 +132,33 @@ void GenRGB16Adaptor::fill_rect(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t 
 /* Setup rectangular writing area */
 void GenRGB16Adaptor::write_begin(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, bool col_order)
 {
+	uint16_t px, py;
+	uint8_t const o = m_o + m_r;
+    switch (o % 4) {
+	case 0:
+		px = m_pleft;
+		py = m_ptop;
+		break;
+	case 1:
+		px = m_ptop;
+		py = m_pright;
+		break;
+	case 2:
+		px = m_pright;
+		py = m_pbottom;
+		break;
+	case 3:
+		px = m_pbottom;
+		py = m_pleft;
+		break;
+    }
 	select();
 	if (col_order) {
 		set_write_order_(true);
-		set_write_window_(y0 + m_py, x0 + m_px, y1 + m_py, x1 + m_px);
+		set_write_window_(y0 + py, x0 + px, y1 + py, x1 + px);
 	} else {
 		set_write_order_(false);
-		set_write_window_(x0 + m_px, y0 + m_py, x1 + m_px, y1 + m_py);
+		set_write_window_(x0 + px, y0 + py, x1 + px, y1 + py);
 	}
 }
 
@@ -178,9 +198,9 @@ void GenRGB16Adaptor::set_scroll_range(uint16_t fr, uint16_t to)
 {
 	if (!to)
 		to = m_h;
-	fr += m_py; to += m_py;
-	// Assume real height is m_h + 2*m_py
-	uint16_t sa = to - fr, ba = m_h + m_py + m_py - to;
+	fr += m_ptop; to += m_ptop;
+	// Assume real height is m_h + m_ptop + m_pbottom
+	uint16_t sa = to - fr, ba = m_h + m_ptop + m_pbottom - to;
 	uint8_t bytes[] = {
 		0x33,
 		(uint8_t)(fr >> 8), (uint8_t)(fr),
@@ -193,7 +213,7 @@ void GenRGB16Adaptor::set_scroll_range(uint16_t fr, uint16_t to)
 /* Set scrolling position */
 void GenRGB16Adaptor::set_scroll_pos(uint16_t pos)
 {
-	pos += m_py;
+	pos += m_ptop;
 	uint8_t bytes[] = {
 		0x37,
 		(uint8_t)(pos >> 8), (uint8_t)(pos)

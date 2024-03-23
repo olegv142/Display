@@ -15,7 +15,7 @@ public:
 	GenRGB16Adaptor(uint16_t w, uint16_t h, uint8_t orientation, Pin cs, Pin rst, Pin dc)
 		: SPIDisplay(cs, rst, dc)
 		, m_w(w), m_h(h), m_o(orientation), m_r(0)
-		, m_px(0), m_py(0), m_bgr(false)
+		, m_pleft(0), m_pright(0), m_ptop(0), m_pbottom(0), m_bgr(false)
 		, m_xflip(false), m_yflip(false)
 		, m_invert(false), m_gamma(-1)
 		, m_madval(-1)
@@ -27,7 +27,12 @@ public:
 
 	/* Set display area padding */
 	void set_padding(uint16_t x_padding, uint16_t y_padding) {
-		m_px = x_padding; m_py = y_padding;
+		m_pleft = m_pright = x_padding;
+        m_ptop = m_pbottom = y_padding;
+	}
+	void set_padding(uint16_t left, uint16_t right, uint16_t top, uint16_t bottom) {
+		m_pleft = left; m_pright = right;
+        m_ptop = top; m_pbottom = bottom;
 	}
 	/* Configure rgb/bgr physical display mode (default is rgb / false) */
 	void set_bgr(bool flag) {
@@ -151,8 +156,10 @@ private:
 	uint16_t m_h;
 	uint8_t  m_o;
 	uint8_t  m_r;
-	uint16_t m_px;
-	uint16_t m_py;
+	uint16_t m_pleft;
+	uint16_t m_pright;
+	uint16_t m_ptop;
+	uint16_t m_pbottom;
 	bool     m_bgr;
 	bool     m_xflip;
 	bool     m_yflip;
