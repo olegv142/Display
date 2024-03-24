@@ -1,4 +1,11 @@
-# Display
+# Display library for Arduino
+
+## Motivation
+Why yet another display library? There are a lot of display 'drivers' available for various I2C and SPI displays. Most of them are just the single class implementing interface to the particular display and drawing and character printing capabilities. So what if I want to support another display? I need to create another class that differ on just several lines of code responsible for display initialization. All other stuff related to drawing / printing should be just copy/pasted to the new class. One should not be OOP guru to understand that such design is pathological. We'd better split such display 'driver' onto two classes. The one responsible for display interaction and the one responsible for drawing / printing. Since the second task typically does not require maintaining context its better be implemented as just functions outside of the class.
+The second problem with the most of existing implementations is memory handling. They just create frame buffer for the entire image and transfer it to display on any update. For reasonably large displays such frame buffer takes a lot of space in RAM prohibiting usage of that displays in micro-controllers with small RAM size. But in fact there is no need to keep frame buffer in RAM at all. The display already have frame buffer for entire screen where we can create the image drawing and printing directly to that buffer.
+
+The above two ideas are key points of this display library. It have two class hierarchies for display 'adapters' providing interface for various displays and implementing just the minimum set of drawing primitives. The first set of classes supports monochrome (OLED) displays. They receive image as bitmap with single bit representing single pixel on the screen. The second set of classes supports color displays representing every pixel by RGB values packed into 16 bits.
+
 Arduino drivers for the following displays:
 
 | Controller | Type  | Resolution | Interface | Comments |
