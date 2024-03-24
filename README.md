@@ -30,7 +30,7 @@ Note that some small displays may be sold without CS pin on external connector. 
 
 ## Compatibility
 
-The library was originally written for AVR micro-controllers like ATmega328P and ATmega32U4. They don't have enough RAM to maintain frame buffer but can drive any display with this library. Lately it was used in several production projects with STM32 micro-controllers. The code in *compat* folder allow for using the library code in non-Arduino projects without modifications (hopefully).
+The library was originally written for AVR micro-controllers like ATmega328P and ATmega32U4. They don't have enough RAM to maintain frame buffer but can drive any display with this library. Lately it was used in several production projects with STM32 micro-controllers. The code in *compat* folder allows for using the library code in non-Arduino projects without modifications (hopefully).
 
 ## Author
 
