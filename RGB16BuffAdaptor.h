@@ -58,12 +58,12 @@ public:
 	virtual void write_pixels(uint16_t const* pix_buff, int len, int pgm = false) {
 		if (m_col_order)
 			for (uint16_t x = m_wr_x0; x <= m_wr_x1; ++x)
-				for (uint16_t y = m_wr_y0; y <= m_wr_y1 && len > 0; ++y, --len)
-					put_pixel_(x, y, *pix_buff++);
+				for (uint16_t y = m_wr_y0; y <= m_wr_y1 && len > 0; ++y, --len, ++pix_buff)
+					put_pixel_(x, y, pgm ? pgm_read_word(pix_buff) : *pix_buff);
 		else
 			for (uint16_t y = m_wr_y0; y <= m_wr_y1; ++y)
-				for (uint16_t x = m_wr_x0; x <= m_wr_x1 && len > 0; ++x, --len)
-					put_pixel_(x, y, *pix_buff++);
+				for (uint16_t x = m_wr_x0; x <= m_wr_x1 && len > 0; ++x, --len, ++pix_buff)
+					put_pixel_(x, y, pgm ? pgm_read_word(pix_buff) : *pix_buff);
 	}
 
 	/* Write pixels bitmap */
@@ -72,13 +72,15 @@ public:
 		if (m_col_order)
 			for (uint16_t x = m_wr_x0; x <= m_wr_x1; ++x)
 				for (uint16_t y = m_wr_y0; y <= m_wr_y1 && i < len; ++y, ++i) {
-					uint16_t colour = colours[1 & (pix_bm[i/8] >> (i%8))];
+					uint8_t const byte = pgm ? pgm_read_byte(pix_bm + i/8) : pix_bm[i/8];
+					uint16_t const colour = colours[1 & (byte >> (i%8))];
 					put_pixel_(x, y, colour);
 				}
 		else
 			for (uint16_t y = m_wr_y0; y <= m_wr_y1; ++y)
 				for (uint16_t x = m_wr_x0; x <= m_wr_x1 && i < len; ++x, ++i) {
-					uint16_t colour = colours[1 & (pix_bm[i/8] >> (i%8))];
+					uint8_t const byte = pgm ? pgm_read_byte(pix_bm + i/8) : pix_bm[i/8];
+					uint16_t const colour = colours[1 & (byte >> (i%8))];
 					put_pixel_(x, y, colour);
 				}
 	}
