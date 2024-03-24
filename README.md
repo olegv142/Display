@@ -25,7 +25,7 @@ Another part of the library is drawing / printing code utilizing the low level d
 
 If you need just small resolution display and don't need colored image then OLED is probably the best choice. The only drawback of OLED displays is burning out. If your OLED display is on 24/7 it won't last longer than a couple of years. For medium sized color displays the best choices are ST7789 based displays. They typically have best of the class color rendition and excellent viewing angles. They look exactly how IPS displays should look unlike other displays that are IPS only on paper. If you need 320x480 resolution the only display supported so far is ST7796. It is not expensive and reasonably good though not that good as ST7789 based displays. The ILI9488 display happens to have some not yet understood incompatibility with generic RGB16 adapter so its not supported by the library.
 
-Note that some small displays may be sold without CS pin on external connector. Don't ever buy / use them. Without CS pin SPi interface has no chances to recover once it turns out of sync.
+Note that some small displays may be sold without CS pin on external connector. Don't ever buy / use them. Without CS pin SPI interface has no chances to recover once it turns out of sync.
 
 ## Compatibility
 
