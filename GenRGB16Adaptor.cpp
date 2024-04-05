@@ -37,7 +37,7 @@ void GenRGB16Adaptor::configure()
 	if (m_invert)
 		write_cmd_(0x21);
 	if (0 <= m_gamma && m_gamma < 4) {
-		uint8_t gamma_cmd[] = {0x26, 1 << m_gamma};
+		uint8_t gamma_cmd[] = {0x26, (uint8_t)(1 << m_gamma)};
 		write_bytes_(mode_cmd_head, gamma_cmd, sizeof(gamma_cmd));
 	}
 	unselect();
