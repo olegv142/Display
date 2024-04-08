@@ -29,11 +29,11 @@ public:
 	/* Set display area padding */
 	void set_padding(uint16_t x_padding, uint16_t y_padding) {
 		m_pleft = m_pright = x_padding;
-        m_ptop = m_pbottom = y_padding;
+		m_ptop = m_pbottom = y_padding;
 	}
 	void set_padding(uint16_t left, uint16_t right, uint16_t top, uint16_t bottom) {
 		m_pleft = left; m_pright = right;
-        m_ptop = top; m_pbottom = bottom;
+		m_ptop = top; m_pbottom = bottom;
 	}
 	/* Configure rgb/bgr physical display mode (default is rgb / false) */
 	void set_bgr(bool flag) {
