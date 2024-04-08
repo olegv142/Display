@@ -22,11 +22,12 @@ Another part of the library is drawing / printing code utilizing the low level d
 | SSD1309 | OLED monochrome | 128x64 | SPI+rst+d/c | reasonably large, protocol-compatible with 1306 |
 | SSD1351 | OLED color | 128x128 | SPI+rst+d/c | expensive color OLED screen |
 | ILI9341 | TFT color | 240x320 | SPI+rst+d/c | old inexpensive displays of various sizes |
+| ILI9488 | TFT color | 320x480 | SPI+rst+d/c | high res TFT display with low brightness and unimpressive angles |
 | ST7735  | TFT color | 128x160 | SPI+rst+d/c | mediocre quality low resolution screen, not recommended |
 | ST7789  | IPS color | 240x320 | SPI+rst+d/c | very good colors and viewing angles |
 | ST7796  | TFT color | 320x480 | SPI+rst+d/c | good inexpensive high resolution screen |
 
-If you need just small resolution display and don't need colored image then OLED is probably the best choice. The only drawback of OLED displays is burning out. If your OLED display is on 24/7 it won't last longer than a couple of years. For medium sized color displays the best choices are ST7789 based displays. They typically have best of the class color rendition and excellent viewing angles. They look exactly how IPS displays should look unlike other displays that are IPS only on paper. If you need 320x480 resolution the only display supported so far is ST7796. It is not expensive and reasonably good though not that good as ST7789 based displays. The ILI9488 display happens to have some not yet understood incompatibility with generic RGB16 adapter so its not supported by the library.
+If you need just small resolution display and don't need colored image then OLED is probably the best choice. The only drawback of OLED displays is burning out. If your OLED display is on 24/7 it won't last longer than a couple of years. For medium sized color displays the best choices are ST7789 based displays. They typically have best of the class color rendition and excellent viewing angles. They look exactly how IPS displays should look unlike other displays that are IPS only on paper. If you need 320x480 resolution the best choice is ST7796. It is not expensive and reasonably good though not that good as ST7789 based displays. The ILI9488 has similar quality but works in 18 bit mode only so it takes 50% more time to transfer pixel data.
 
 Note that some small displays may be sold without CS pin on external connector. Don't ever buy / use them. Without CS pin SPI interface has no chances to recover once it turns out of sync.
 
