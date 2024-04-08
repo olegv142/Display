@@ -15,7 +15,8 @@ public:
 	GenRGB16Adaptor(uint16_t w, uint16_t h, uint8_t orientation, Pin cs, Pin rst, Pin dc)
 		: SPIDisplay(cs, rst, dc)
 		, m_w(w), m_h(h), m_o(orientation), m_r(0)
-		, m_pleft(0), m_pright(0), m_ptop(0), m_pbottom(0), m_bgr(false)
+		, m_pleft(0), m_pright(0), m_ptop(0), m_pbottom(0)
+		, m_bgr(false), m_18bit(false)
 		, m_xflip(false), m_yflip(false)
 		, m_invert(false), m_gamma(-1)
 		, m_madval(-1)
@@ -37,6 +38,10 @@ public:
 	/* Configure rgb/bgr physical display mode (default is rgb / false) */
 	void set_bgr(bool flag) {
 		m_bgr = flag;
+	}
+	/* Configure 18 bit colors (default is 16 bit / false) */
+	void set_18bit_color(bool flag) {
+		m_18bit = flag;
 	}
 	/* Configure physical display flipping */
 	void set_flip(bool xflip, bool yflip) {
@@ -148,8 +153,14 @@ private:
 	}
 	/* Write pixel RGB data */
 	void write_pixel_(uint16_t colour) {
-		transfer((uint8_t)(colour >> 8));
-		transfer((uint8_t)(colour));
+		if (m_18bit) {
+			transfer((uint8_t)((colour >> 8) & 0xF8));
+			transfer((uint8_t)((colour >> 3) & 0xFC));
+			transfer((uint8_t)((colour << 3) & 0xF8));
+		} else {
+			transfer((uint8_t)(colour >> 8));
+			transfer((uint8_t)(colour));
+		}
 	}
 
 	uint16_t m_w;
@@ -161,6 +172,7 @@ private:
 	uint16_t m_ptop;
 	uint16_t m_pbottom;
 	bool     m_bgr;
+	bool     m_18bit;
 	bool     m_xflip;
 	bool     m_yflip;
 	bool     m_invert;

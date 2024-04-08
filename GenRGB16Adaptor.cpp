@@ -1,11 +1,5 @@
 #include "GenRGB16Adaptor.h"
 
-/* The power-up initialization configuration. Taken from MI0283QT-9A screen datasheet. */
-static const uint8_t s_ST7796_init_cmds[] PROGMEM = {
-	2, 0x3A, 0x55,          // COLMOD_PIXEL_FORMAT_SET - 16 bit pixel 
-	0
-};
-
 /* Initialize display */
 void GenRGB16Adaptor::init(uint16_t fill_colour)
 {
@@ -33,7 +27,9 @@ void GenRGB16Adaptor::reset()
 void GenRGB16Adaptor::configure()
 {
 	select();
-	write_cmds_(s_ST7796_init_cmds, true);
+	uint8_t const color_mode = m_18bit ? 0x66 : 0x55;
+	uint8_t color_mode_cmd[] = {0x3A, color_mode};
+	write_bytes_(mode_cmd_head, color_mode_cmd, sizeof(color_mode_cmd));
 	if (m_invert)
 		write_cmd_(0x21);
 	if (0 <= m_gamma && m_gamma < 4) {
