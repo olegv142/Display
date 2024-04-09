@@ -42,6 +42,7 @@ public:
 
 	/* Transfer byte */
 	void transfer(uint8_t byte) { SPI.transfer(byte); }
+	void transfer(uint8_t const* buff, uint16_t len) { SPI.transfer((uint8_t*)buff, len); }
 
 	/*
 	 * Helper routines. The ones with name ending by _ should be enclosed between select and unselect calls.

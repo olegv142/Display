@@ -154,12 +154,11 @@ private:
 	/* Write pixel RGB data */
 	void write_pixel_(uint16_t colour) {
 		if (m_18bit) {
-			transfer((uint8_t)((colour >> 8) & 0xF8));
-			transfer((uint8_t)((colour >> 3) & 0xFC));
-			transfer((uint8_t)((colour << 3) & 0xF8));
+			uint8_t data[] = {(uint8_t)((colour >> 8) & 0xF8), (uint8_t)((colour >> 3) & 0xFC), (uint8_t)(colour << 3)};
+			transfer(data, sizeof(data));
 		} else {
-			transfer((uint8_t)(colour >> 8));
-			transfer((uint8_t)(colour));
+			uint8_t data[] = {(uint8_t)(colour >> 8), (uint8_t)colour};
+			transfer(data, sizeof(data));
 		}
 	}
 
